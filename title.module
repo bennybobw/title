@@ -18,13 +18,16 @@ function title_page() {
     if ($number > 1) {
       $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title = '%s' AND n.status = 1 ORDER BY created DESC", $title);
 
+      theme("header");
+      $message = t("There is more than one node whith the title you specified. Please choose one below.");
+      theme("box", t("Message"), $message);
+
       while ($node = db_fetch_object($result)) {
         if (node_access("view", $node)) {
           $output .= "<p><b>". l($node->title, array("id" => $node->nid)) ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->ccreated, "small") ."</small></p>";
         }
       }
 
-      theme("header");
       theme("box", t("Result"), $output);
       theme("footer");
     }
@@ -41,10 +44,30 @@ function title_page() {
       else {
         title_failure();
       }
+    }
+    else { // No node with that title found , try regex.
+      $number = ($title ? db_num_rows(db_query("SELECT nid FROM node WHERE title LIKE '%%s%' AND status = 1", $title)) : 1);
 
-    } 
+      if ($number) {
+        $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%%s%' AND n.status = 1 ORDER BY created DESC", $title);
+
+        theme("header");
+        $message = t("There are no nodes with the title you specified. A search was tried instead, the results are shown below.");
+        theme("box", t("Message"), $message);
+
+        while ($node = db_fetch_object($result)) {
+          if (node_access("view", $node)) {
+            $output .= "<p><b>". l($node->title, array("id" => $node->nid)) ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->ccreated, "small") ."</small></p>";
+          }
+        }
+
+        theme("box", t("Result"), $output);
+        theme("footer");
+      }
+    }
     else {
       title_failure();
+    }
     }
 
   }
@@ -68,8 +91,8 @@ function title_conf_filters() {
   $output .= "<hr />";
   return $output;
 }
-function title_failure() {
 
+function title_failure() {
   theme("header");
   theme("box", t("Not found"), t("The node you are looking for does no longer exist or is not accessible without the proper access rights.") ."\n");
   theme("footer");
