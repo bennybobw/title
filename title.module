@@ -70,8 +70,14 @@ function title_page($query) {
 /**
  * Implementation of hook_filter().
  */
-function title_filter($op, $text = '', $node = NULL) {
+function title_filter($op, $delta = 0, $format = -1, $text = ''){
   switch ($op) {
+    case 'list':
+      return array(0 => t('Title filter'));
+    case 'no cache':
+      return false;
+    case 'description':
+      return t('Enables users to link to stories, articles or similar content by title.');
     case 'name':
       return t('Title filter');
     case 'process':
