@@ -35,12 +35,19 @@ function title_page() {
       }
     }  
     else {
-      $output = t("<p>More than one post matches title: <i>$title</i></p>");
       while ($node = db_fetch_object($result)) {
-        if (node_access("view", $node)) {
-          $output .= "<p><b>". l($node->title, "node/view/$node->nid") ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->created, "small") ."</small></p>";
+        if (node_access("view", $node)) {          
+          
+          $type = ucfirst(module_invoke($node->type, "node", "name"));
+          $title = l($node->title, "node/view/$node->nid");
+          $author = format_name($node);
+          $rows[] = array(array("data" => $type, "class" => "type"), array("data" => $title, "class" => "content"), array("data" => $author, "class" => "author"));
         }
       }
+      $header = array(t("Type"), t("Title"), t("Author"));
+      $output  = "<div id=\"title\">";      
+      $output .= table($header, $rows);
+      $output .= "</div>";
       theme("header");
       theme("box", t("Matching Posts"), $output);
       theme("footer");
