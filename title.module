@@ -79,7 +79,7 @@ function title_filter($op, $delta = 0, $format = -1, $text = ''){
     case 'process':
       return _title_filter_process($text);
     case 'settings':
-      return _title_filter_settings($text);
+      return;
     default:
       return $text;
   }
