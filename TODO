@@ -1,2 +1,51 @@
 - look for matching comments as well
 - some fuzzy matching a la php.net/some-function
+
+About fuzzy matching
+ (Some discussion between Brandon and myself on drupal-support)
+====================
+
+
+You will likely need to implement it yourself, since I am not aware of
+an extant PHP implementation, but you should check into the Nilsimsa
+digest algorithm:
+
+http://ixazon.dynip.com/~cmeclax/nilsimsa.html
+
+Store a nilsimsa hash of the title in the db along with each node and
+then you can compute the nilsimsa hash for a given StudlyLink and do a
+quick select to look for a node with a similar nilsimsa hash.
+
+> That last part probably needs some discussion. Look here:
+> http://ixazon.dynip.com/pipermail/nilsimsa/2002-March/thread.html
+
+Yes, it's not blazingly fast, but if you want fuzzy matching it's
+probably going to be no slower than any other algorithm and probably
+faster than most of the others.  For instance, if you tried to use
+LCS[0] for this you'd have to run an LCS comparison between the
+StudlyLink and every node title in the database.  The time necessary to
+run a nilsimsa test on every hash in the database is likely faster than
+that necessary for LCS matching.  Plus, nilsimsa can be tweaked.  If
+someone is running a site highly trafficked enough that they cannot
+afford the CPU cycles necessary to run these nilsimsa tests they can
+turn them off so that only exact hash matches will be returned via a
+vanilla select.  Exact nilsimsa hash matching will *still* be fuzzy to
+the extent that the nilsimsa algorithm itself accounts for small changes
+in the data being hashed but will incur no computational overhead for
+matching beyond what a select requires.
+
+> I too haven't found a nilsimsa implementation in php and I probably
+> don't have time to do it myself anyway. Is there a perl2php converter?
+> Nilsimsa seems to be available for perl.
+
+I don't have the time to do it right now, though it shouldn't be
+difficult to do.  The Perl version BTW is not written in native Perl,
+it's a Perl wrapper around the C version.  You could use SWIG[1] to
+connect the C version to PHP or you could read the C source code and
+reimplement in native PHP.  It's a toss up.  Who knows how stable PHP's
+SWIG bindings are, but it's my instict that any attempt at a nilsimsa
+implementation in native PHP is likely to suck.
+
+[0] - http://www.nist.gov/dads/HTML/longestcommn.html
+[1] - http://www.swig.org/
+
