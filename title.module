@@ -6,33 +6,24 @@ function title_system($field){
 }
 
 function title_page() {
-  global $keys;
 
-  page_header();
   if (user_access("access content")) {
 
     $title = urldecode(arg(1));
     $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title = '%s' AND n.status = 1 ORDER BY created DESC", $title);
     if (db_num_rows($result) == 0) {
       // No node with exact title found, try substring.
-      $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%". check_query($title). "%' AND n.status = 1 ORDER BY created DESC");
+      $result = db_query("SELECT n.* FROM node n WHERE n.title LIKE '%". check_query($title). "%' AND n.status = 1 ORDER BY created DESC");
     }  
     if (db_num_rows($result) == 0 && module_exist("search")) { 
       // still no matches ... return a full text search
-      $keys = $title;
-      search_view();
+      search_view($title);
     }
     else if (db_num_rows($result) == 1) { 
       $row = db_fetch_object($result);
-      $node = node_load(array("title" => $row->title, "status" => 1));
-      if (node_access("view", $node)) {
-        if (isset($revision)) {
-          $node = $node->revisions[$revision]["node"];
-        }
-        theme("header");
-        node_view($node);
-        theme("footer");
-      }
+      theme("header");
+      print node_show($row->nid, NULL);
+      theme("footer");
     }  
     else {
       while ($node = db_fetch_object($result)) {
