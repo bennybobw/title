@@ -5,70 +5,40 @@ function title_system($field){
   return $system[$field];
 }
 
-
 function title_page() {
-
   page_header();
   if (user_access("access content")) {
 
+    theme("header");
     $title = urldecode(arg(1));
-
-    $number = ($title ? db_num_rows(db_query("SELECT nid FROM node WHERE title = '%s' AND status = 1", $title)) : 1);
-
-    if ($number > 1) {
-      $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title = '%s' AND n.status = 1 ORDER BY created DESC", $title);
-
-      theme("header");
-      $message = t("There is more than one node whith the title you specified. Please choose one below.");
-      theme("box", t("Message"), $message);
-
-      while ($node = db_fetch_object($result)) {
-        if (node_access("view", $node)) {
-          $output .= "<p><b>". l($node->title, array("id" => $node->nid)) ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->ccreated, "small") ."</small></p>";
-        }
-      }
-
-      theme("box", t("Result"), $output);
-      theme("footer");
+    $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title = '%s' AND n.status = 1 ORDER BY created DESC", $title);
+    if (!db_num_rows($result)) {
+      // No node with exact title found, try substring.
+      $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%". check_query($title). "%' AND n.status = 1 ORDER BY created DESC");
+    }  
+    if (db_num_rows($result) == 0) { 
+      theme("box", t("Matching Content"), t("No posts match the title '$title'"));
     }
-    elseif ($number) {
-      $node = ($title ? node_load(array("title" => $title, "status" => 1)) : node_load(array("status" => 1, "nid" => ($edit["id"] ? $edit["id"] : $id))));
+    else if (db_num_rows($result) == 1) { 
+      $row = db_fetch_object($result);
+      $node = node_load(array("title" => $row->title, "status" => 1));
       if (node_access("view", $node)) {
         if (isset($revision)) {
           $node = $node->revisions[$revision]["node"];
         }
-        theme("header");
         node_view($node);
-        theme("footer");
       }
-      else {
-        title_failure();
-      }
-    }
-    else { // No node with that title found , try regex.
-      $number = ($title ? db_num_rows(db_query("SELECT nid FROM node WHERE title LIKE '%$title%' AND status = 1")) : 0);
-
-      if ($number) {
-        $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%$title%' AND n.status = 1 ORDER BY created DESC");
-
-        theme("header");
-        $message = t("There are no nodes with the title you specified. A search was tried instead, the results are shown below.");
-        theme("box", t("Message"), $message);
-
-        while ($node = db_fetch_object($result)) {
-          if (node_access("view", $node)) {
-            $output .= "<p><b>". l($node->title, array("id" => $node->nid)) ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->ccreated, "small") ."</small></p>";
-          }
+    }  
+    else {
+      $output = t("<p>More than one post matches title: <i>$title</i></p>");
+      while ($node = db_fetch_object($result)) {
+        if (node_access("view", $node)) {
+          $output .= "<p><b>". l($node->title, "node/view/$node->nid") ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->created, "small") ."</small></p>";
         }
-
-        theme("box", t("Result"), $output);
-        theme("footer");
       }
-      else {
-        title_failure();
-      }
+      theme("box", t("Matching Posts"), $output);
     }
-
+    theme("footer");
   }
   else {
     theme("header");
@@ -86,15 +56,9 @@ function title_filter_link($text) {
 }
 
 function title_conf_filters() {
-  $output = form_select(t("Enable link tags"), "filter_link", variable_get("filter_link", 0), array(t("Disabled"), t("Enabled")), t("Enable Wiki-like [node title|text] links. This will generate a link labeled 'text' to the node with the title 'node title'. If you omit '|text', the label becomes 'node title'. Please be aware that you'll need to copy the title of the target node exactly in order to use this feature. Also note that there may be more than one node with a certain title. In this case, a list of matching nodes will be displayed."));
+  $output = form_select(t("Enable link tags"), "filter_link", variable_get("filter_link", 0), array(t("Disabled"), t("Enabled")), t("Enable Wiki-like [node title|text] links. This will generate a link labeled 'text' to the node with the title 'node title'. If you omit '|text', the label becomes 'node title'. You may use a substring of a node title if desired. When multiple matching titles are found, a list of matching nodes will be displayed."));
   $output .= "<hr />";
   return $output;
-}
-
-function title_failure() {
-  theme("header");
-  theme("box", t("Not found"), t("The node you are looking for does no longer exist or is not accessible without the proper access rights.") ."\n");
-  theme("footer");
 }
 
 ?>
