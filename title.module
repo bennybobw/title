@@ -55,10 +55,15 @@ function title_page() {
 
 // filter [node title|description] links. '|description' is optional.
 function title_filter($text) {
-  $pattern = '\[([^\|\]]+)(?>\|?)(.*?)\]';  // $1 == title: matches at least 1 char up to the first '|' or ']'
-                                         // $2 == text: matches all after a following '|' (if there is) up to the next ']'. may include '|'s.
-  $replacement = 'l("$2" ? "$2" : "$1", "title/". urlencode("$1"))';
-  return preg_replace("/$pattern/e", $replacement, $text);
+  if(variable_get("title_filter_link", 0)) {
+    $pattern = '\[([^\|\]]+)(?>\|?)(.*?)\]';  // $1 == title: matches at least 1 char up to the first '|' or ']'
+                                           // $2 == text: matches all after a following '|' (if there is) up to the next ']'. may include '|'s.
+    $replacement = 'l("$2" ? "$2" : "$1", "title/". urlencode("$1"))';
+    return preg_replace("/$pattern/e", $replacement, $text);
+  }
+  else {
+    return $text;
+  }
 }
 
 function title_conf_filters() {
