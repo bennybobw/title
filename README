@@ -1,1 +1,3 @@
-A small module that reimplements the "link node by title" function.
+A small module that lets you link to node titles. If supplied title matches no nodes, a full text search is
+performed (like php.net). Also provides a handy mechanism Wiki style mechanism for
+linking to a node while composing content.

@@ -6,18 +6,21 @@ function title_system($field){
 }
 
 function title_page() {
+  global $keys;
+
   page_header();
   if (user_access("access content")) {
 
-    theme("header");
     $title = urldecode(arg(1));
     $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title = '%s' AND n.status = 1 ORDER BY created DESC", $title);
-    if (!db_num_rows($result)) {
+    if (db_num_rows($result) == 0) {
       // No node with exact title found, try substring.
       $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%". check_query($title). "%' AND n.status = 1 ORDER BY created DESC");
     }  
-    if (db_num_rows($result) == 0) { 
-      theme("box", t("Matching Content"), t("No posts match the title '$title'"));
+    if (db_num_rows($result) == 0 && module_exist("search")) { 
+      // still no matches ... return a full text search
+      $keys = $title;
+      search_view();
     }
     else if (db_num_rows($result) == 1) { 
       $row = db_fetch_object($result);
@@ -26,7 +29,9 @@ function title_page() {
         if (isset($revision)) {
           $node = $node->revisions[$revision]["node"];
         }
+        theme("header");
         node_view($node);
+        theme("footer");
       }
     }  
     else {
@@ -36,9 +41,10 @@ function title_page() {
           $output .= "<p><b>". l($node->title, "node/view/$node->nid") ."</b><br /><small>$node->type - ". format_name($node) ." - ". format_date($node->created, "small") ."</small></p>";
         }
       }
+      theme("header");
       theme("box", t("Matching Posts"), $output);
+      theme("footer");
     }
-    theme("footer");
   }
   else {
     theme("header");
@@ -55,8 +61,8 @@ function title_filter($text) {
   return preg_replace("/$pattern/e", $replacement, $text);
 }
 
-function title_settings() {
-  $output = form_select(t("Enable link tags"), "title_filter_link", variable_get("title_filter_link", 0), array(t("Disabled"), t("Enabled")), t("Enable Wiki-like [node title|text] links. This will generate a link labeled 'text' to the node with the title 'node title'. If you omit '|text', the label becomes 'node title'. You may use a substring of a node title if desired. When multiple matching titles are found, a list of matching nodes will be displayed."));
+function title_conf_filters() {
+  $output = form_select(t("Enable node link tags"), "title_filter_link", variable_get("title_filter_link", 0), array(t("Disabled"), t("Enabled")), t("Enable Wiki-like [node title|text] links. This will generate a link labeled 'text' to the node with the title 'node title'. If you omit '|text', the label becomes 'node title'. You may use a substring of a node title if desired. When multiple matching titles are found, a list of matching nodes will be displayed. If no matching titles are found, a full-text search is returned."));
   $output .= "<hr />";
   return $output;
 }
