@@ -7,7 +7,7 @@ function title_system($field){
 
 
 function title_page() {
-  global $theme;
+
   page_header();
   if (user_access("access content")) {
 
@@ -24,9 +24,9 @@ function title_page() {
         }
       }
 
-      $theme->header();
-      $theme->box(t("Result"), $output);
-      $theme->footer();
+      theme("header");
+      theme("box", t("Result"), $output);
+      theme("footer");
     }
     elseif ($number) {
       $node = ($title ? node_load(array("title" => $title, "status" => 1)) : node_load(array("status" => 1, "nid" => ($edit["id"] ? $edit["id"] : $id))));
@@ -34,9 +34,9 @@ function title_page() {
         if (isset($revision)) {
           $node = $node->revisions[$revision]["node"];
         }
-        $theme->header();
+        theme("header");
         node_view($node);
-        $theme->footer();
+        theme("footer");
       }
       else {
         title_failure();
@@ -49,17 +49,17 @@ function title_page() {
 
   }
   else {
-    $theme->header();
-    $theme->box(t("Access denied"), message_access());
-    $theme->footer();
+    theme("header");
+    theme("box", t("Access denied"), message_access());
+    theme("footer");
   }
 }
 
 function title_failure() {
-  global $theme;
-  $theme->header();
-  $theme->box(t("Not found"), t("The node you are looking for does no longer exist or is not accessible without the proper access rights.") ."\n");
-  $theme->footer();
+
+  theme("header");
+  theme("box", t("Not found"), t("The node you are looking for does no longer exist or is not accessible without the proper access rights.") ."\n");
+  theme("footer");
 }
 
 ?>
