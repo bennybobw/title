@@ -46,10 +46,10 @@ function title_page() {
       }
     }
     else { // No node with that title found , try regex.
-      $number = ($title ? db_num_rows(db_query("SELECT nid FROM node WHERE title LIKE '%%s%' AND status = 1", $title)) : 1);
+      $number = ($title ? db_num_rows(db_query("SELECT nid FROM node WHERE title LIKE '%$title%' AND status = 1")) : 0);
 
       if ($number) {
-        $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%%s%' AND n.status = 1 ORDER BY created DESC", $title);
+        $result = db_query("SELECT n.*, u.name, u.uid FROM node n LEFT JOIN users u ON n.uid = u.uid WHERE n.title LIKE '%$title%' AND n.status = 1 ORDER BY created DESC");
 
         theme("header");
         $message = t("There are no nodes with the title you specified. A search was tried instead, the results are shown below.");
@@ -64,10 +64,9 @@ function title_page() {
         theme("box", t("Result"), $output);
         theme("footer");
       }
-    }
-    else {
-      title_failure();
-    }
+      else {
+        title_failure();
+      }
     }
 
   }
