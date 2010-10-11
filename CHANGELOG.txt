@@ -1,0 +1,5 @@
+// $Id$
+
+Title 7.x-1.x, xxxx-xx-xx
+-------------------------
+by sun: Initial baseline of module files.
