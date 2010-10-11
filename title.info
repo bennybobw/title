@@ -1,8 +1,8 @@
 ; $Id$
 name = Title
 description = Allows entity titles/labels to be translated.
-dependencies[] = locale
 package = Multilingual
 core = 7.x
+dependencies[] = locale
 files[] = title.module
 files[] = tests/title.test
