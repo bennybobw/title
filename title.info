@@ -1,4 +1,3 @@
-; $Id$
 name = Title
 description = Allows entity titles/labels to be translated.
 package = Multilingual
