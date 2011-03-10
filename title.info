@@ -1,7 +1,6 @@
 name = Title
-description = Allows entity titles/labels to be translated.
-package = Multilingual
+description = Replaces entity legacy fields with regular fields.
 core = 7.x
-dependencies[] = locale
 files[] = title.module
 files[] = tests/title.test
+dependencies[] = entity
