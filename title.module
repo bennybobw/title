@@ -202,7 +202,20 @@ function title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode
 }
 
 /**
- * TODO
+ * Synchronize a single regular field from its legacy field value.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $entity
+ *   The entity to work with.
+ * @param $legacy_field
+ *   The name of the legacy field to be replaced.
+ * @param $field_name
+ *   The regular field to use as source value.
+ * @param $display
+ *   Specifies if synchronization is being performed on display or on save.
+ * @param $langcode
+ *   The field language to use for the source value.
  */
 function title_field_sync_back($entity_type, $entity, $legacy_field, $info) {
   if (isset($entity->{$legacy_field})) {
@@ -212,7 +225,13 @@ function title_field_sync_back($entity_type, $entity, $legacy_field, $info) {
 }
 
 /**
- * TODO
+ * Provide the original entity language.
+ *
+ * @param $entity_type
+ * @param $entity
+ *
+ * @return
+ *   A language code
  */
 function title_entity_language($entity_type, $entity) {
   // If a language property is defined for the current entity we synchronize

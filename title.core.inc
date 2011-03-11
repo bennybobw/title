@@ -2,7 +2,9 @@
 
 /**
  * @file
- * TODO
+ *
+ * Provide field replacement information for core entities and type specific
+ * callbacks.
  */
 
 /**
@@ -98,7 +100,7 @@ function _title_field_replacement_core_info() {
 }
 
 /**
- * TODO
+ * Submit callback for the taxonomy term description.
  */
 function title_field_term_description_submit(&$values, $legacy_field, $info, $langcode) {
   $values['description'] = array();
@@ -108,7 +110,7 @@ function title_field_term_description_submit(&$values, $legacy_field, $info, $la
 }
 
 /**
- * TODO
+ * Sync callback for the text field type.
  */
 function title_field_text_sync($entity_type, $entity, $legacy_field, $info, $langcode) {
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
@@ -117,7 +119,7 @@ function title_field_text_sync($entity_type, $entity, $legacy_field, $info, $lan
 }
 
 /**
- * TODO
+ * Sync back callback for the text field type.
  */
 function title_field_text_sync_back($entity_type, $entity, $legacy_field, $info, $langcode) {
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
@@ -126,7 +128,7 @@ function title_field_text_sync_back($entity_type, $entity, $legacy_field, $info,
 }
 
 /**
- * TODO
+ * Sync callback for the text with summary field type.
  */
 function title_field_text_with_summary_sync($entity_type, $entity, $legacy_field, $info, $langcode) {
   $format_key = $info['additional keys']['format'];
@@ -138,7 +140,7 @@ function title_field_text_with_summary_sync($entity_type, $entity, $legacy_field
 }
 
 /**
- * TODO
+ * Sync back callback for the text with summary field type.
  */
 function title_field_text_with_summary_sync_back($entity_type, $entity, $legacy_field, $info, $langcode) {
   $format_key = $info['additional keys']['format'];
