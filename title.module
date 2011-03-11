@@ -255,11 +255,11 @@ function title_field_attach_form($entity_type, $entity, &$form, &$form_state, $l
   list(, , $bundle) = entity_extract_ids($entity_type, $entity);
   $fr_info = title_field_replacement_info($entity_type);
 
-  if ($fr_info) {
+  if (!empty($fr_info)) {
     foreach ($fr_info as $legacy_field => $info)  {
       if (isset($form[$legacy_field]) && title_field_replacement_enabled($entity_type, $bundle, $legacy_field)) {
         $form[$legacy_field]['#access'] = FALSE;
-        $form_state['field_replacement'][] = $legacy_field;
+        $form[$legacy_field]['#field_replacement'] = TRUE;
       }
     }
   }
@@ -271,23 +271,25 @@ function title_field_attach_form($entity_type, $entity, &$form, &$form_state, $l
  * Synchronize submitted field values into the corresponding legacy fields.
  */
 function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
-  if (!empty($form_state['field_replacement'])) {
+  $fr_info = title_field_replacement_info($entity_type);
+
+  if (!empty($fr_info)) {
     $values = &$form_state['values'];
     $values = &drupal_array_get_nested_value($values, $form['#parents']);
-    $form = drupal_array_get_nested_value($form, $form['#parents']);
     $fr_info = title_field_replacement_info($entity_type);
 
-    foreach ($form_state['field_replacement'] as $legacy_field) {
-      $info = $fr_info[$legacy_field];
-      $field_name = $info['field']['field_name'];
-      $langcode = $form[$field_name]['#language'];
-
-      // Give a chance to operate on submitted values either.
-      if (!empty($info['callbacks']['submit'])) {
-        $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
+    foreach ($fr_info as $legacy_field => $info) {
+      if (!empty($form[$legacy_field]['#field_replacement'])) {
+        $field_name = $info['field']['field_name'];
+        $langcode = $form[$field_name]['#language'];
+  
+        // Give a chance to operate on submitted values either.
+        if (!empty($info['callbacks']['submit'])) {
+          $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
+        }
+  
+        title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode);
       }
-
-      title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode);
     }
   }
 }
