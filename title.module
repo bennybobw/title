@@ -15,7 +15,6 @@
  * - Taxonomy Term: name, description
  * - Comment: subject
  *
- * @todo: entity label callback
  * @todo: tests
  */
 
@@ -43,9 +42,14 @@ function title_entity_info_alter(&$info) {
           $fr_info['callbacks'] = array();
         }
         $fr_info['callbacks'] += array(
-          'sync' => "title_field_{$type}_sync",
-          'sync_back' => "title_field_{$type}_sync_back",
+          'sync_get' => "title_field_{$type}_sync_get",
+          'sync_set' => "title_field_{$type}_sync_set",
         );
+
+        // Support add explicit support for entity_label().
+        if ($entity_info['entity keys']['label'] == $legacy_field) {
+          $entity_info['entity keys']['label callback'] = 'title_entity_label';
+        }
       }
     }
   }
@@ -60,6 +64,27 @@ function title_field_replacement_info($entity_type, $legacy_field = NULL) {
     return FALSE;
   }
   return isset($legacy_field) ? $info['field replacement'][$legacy_field] : $info['field replacement'];
+}
+
+/**
+ * Return an entity label value.
+ *
+ * @param $entity
+ *   The entity whose label has to be displayed.
+ * @param $type
+ *   The entity type.
+ * @param $langcode
+ *   (Optional) The language the entity label has to be displayed in.
+ *
+ * @return
+ *   The entity label as a string value.
+ */
+function title_entity_label($entity, $type, $langcode = NULL) {
+  $entity_info = entity_get_info($entity_type);
+  $legacy_field = $entity_info['entity keys']['label'];
+  $info = $entity_info['field_replacement'][$legacy_field];
+  $langcode = field_language($type, $entity, $info['field']['field_name'], $langcode);
+  return $info['callbacks']['sync_get']($entity_type, $entity, $legacy_field, $info, $langcode);
 }
 
 /**
@@ -85,18 +110,18 @@ function title_entity_insert($entity, $type) {
  * Since Title is supposed to act as the first module on hook invocation, legacy
  * field values might be altered after reverse synchronization by subsequent
  * hook implementations. If this happens the field values must be synchronized
- * and the updated versions must be saved. 
+ * and the updated versions must be saved.
  */
 function title_entity_update($entity, $type) {
   $fr_info = title_field_replacement_info($type);
 
   if ($fr_info) {
     $update = FALSE;
-    list(, , $bundle) = entity_extract_ids($type, $entity);     
+    list(, , $bundle) = entity_extract_ids($type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
       if ($entity->{$legacy_field} !== $entity->field_replacement->{$legacy_field} && title_field_replacement_enabled($type, $bundle, $legacy_field)) {
-        title_field_sync_back($type, $entity, $legacy_field, $info);
+        title_field_sync_set($type, $entity, $legacy_field, $info);
         $update = TRUE;
       }
     }
@@ -189,26 +214,26 @@ function title_field_replacement_enabled($entity_type, $bundle, $legacy_field) {
  *   The name of the entity type.
  * @param $entity
  *   The entity to work with.
- * @param $back
+ * @param $set
  *   Specifies the direction synchronization must be performed.
  */
-function title_entity_sync($entity_type, &$entity, $langcode = NULL, $back = FALSE) {
+function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALSE) {
   $sync = &drupal_static(__FUNCTION__, array());
   list($id, , $bundle) = entity_extract_ids($entity_type, $entity);
   $langcode = field_valid_language($langcode, FALSE);
 
   // We do not need to perform this more than once.
-  if (!empty($sync[$entity_type][$id][$langcode][$back])) {
+  if (!empty($sync[$entity_type][$id][$langcode][$set])) {
     return;
   }
 
-  $sync[$entity_type][$id][$langcode][$back] = TRUE;
+  $sync[$entity_type][$id][$langcode][$set] = TRUE;
   $fr_info = title_field_replacement_info($entity_type);
 
   if ($fr_info) {
     foreach ($fr_info as $legacy_field => $info) {
       if (title_field_replacement_enabled($entity_type, $bundle, $legacy_field)) {
-        $function = $back ? 'title_field_sync_back' : 'title_field_sync';
+        $function = 'title_field_sync_' . ($set ? 'set' : 'get');
         $function($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
@@ -231,11 +256,11 @@ function title_entity_sync($entity_type, &$entity, $langcode = NULL, $back = FAL
  * @param $langcode
  *   The field language to use for the source value.
  */
-function title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode = NULL) {
+function title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode = NULL) {
   if (isset($entity->{$legacy_field})) {
     // Find out the actual language to use (field might be untranslatable).
     $langcode = field_language($entity_type, $entity, $info['field']['field_name'], $langcode);
-    $info['callbacks']['sync']($entity_type, $entity, $legacy_field, $info, $langcode);
+    $entity->{$legacy_field} = $info['callbacks']['sync_get']($entity_type, $entity, $legacy_field, $info, $langcode);
   }
 }
 
@@ -255,10 +280,10 @@ function title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode
  * @param $langcode
  *   The field language to use for the source value.
  */
-function title_field_sync_back($entity_type, $entity, $legacy_field, $info) {
+function title_field_sync_set($entity_type, $entity, $legacy_field, $info) {
   if (isset($entity->{$legacy_field})) {
     $langcode = title_entity_language($entity_type, $entity);
-    $info['callbacks']['sync_back']($entity_type, $entity, $legacy_field, $info, $langcode);
+    $info['callbacks']['sync_set']($entity_type, $entity, $legacy_field, $info, $langcode);
   }
 }
 
@@ -320,13 +345,13 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
       if (!empty($form[$legacy_field]['#field_replacement'])) {
         $field_name = $info['field']['field_name'];
         $langcode = $form[$field_name]['#language'];
-  
+
         // Give a chance to operate on submitted values either.
         if (!empty($info['callbacks']['submit'])) {
           $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
         }
-  
-        title_field_sync($entity_type, $entity, $legacy_field, $info, $langcode);
+
+        title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
   }
