@@ -14,10 +14,9 @@
  * - Node: title
  * - Taxonomy Term: name, description
  * - Comment: subject
- * - User: name
  *
+ * @todo: entity label callback
  * @todo: tests
- * @todo: entity insert/update sync
  */
 
 module_load_include('inc', 'title', 'title.core');
@@ -68,6 +67,45 @@ function title_field_replacement_info($entity_type, $legacy_field = NULL) {
  */
 function title_entity_presave($entity, $type) {
   title_entity_sync($type, $entity, NULL, TRUE);
+  // Store a copy of the synchronized values to check if they have been altered
+  // before saving.
+  $entity->field_replacement = clone($entity);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function title_entity_insert($entity, $type) {
+  title_entity_update($entity, $type);
+}
+
+/**
+ * Implements hook_entity_update().
+ *
+ * Since Title is supposed to act as the first module on hook invocation, legacy
+ * field values might be altered after reverse synchronization by subsequent
+ * hook implementations. If this happens the field values must be synchronized
+ * and the updated versions must be saved. 
+ */
+function title_entity_update($entity, $type) {
+  $fr_info = title_field_replacement_info($type);
+
+  if ($fr_info) {
+    $update = FALSE;
+    list(, , $bundle) = entity_extract_ids($type, $entity);     
+
+    foreach ($fr_info as $legacy_field => $info) {
+      if ($entity->{$legacy_field} !== $entity->field_replacement->{$legacy_field} && title_field_replacement_enabled($type, $bundle, $legacy_field)) {
+        title_field_sync_back($type, $entity, $legacy_field, $info);
+        $update = TRUE;
+      }
+    }
+
+    if ($update) {
+      // Save updated field values.
+      field_attach_update($type, $entity);
+    }
+  }
 }
 
 /**

@@ -84,18 +84,6 @@ function _title_field_replacement_core_info() {
     ),
   );
 
-  $info['user'] = array(
-    'field replacement' => array(
-      'name' => array(
-        'field' => $field,
-        'instance' => array(
-          'label' => t('Name'),
-          'description' => t('A field replacing user name.'),
-        ) + $instance,
-      ),
-    ),
-  );
-
   return $info;
 }
 
