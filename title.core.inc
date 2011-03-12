@@ -2,7 +2,6 @@
 
 /**
  * @file
- *
  * Provide field replacement information for core entities and type specific
  * callbacks.
  */
