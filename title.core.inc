@@ -7,9 +7,9 @@
  */
 
 /**
- * Provide core legacy fields replacement info.
+ * Implements hook_entity_info().
  */
-function _title_field_replacement_core_info() {
+function title_entity_info() {
   $info = array();
 
   $field = array(

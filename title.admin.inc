@@ -81,8 +81,12 @@ function title_field_replacement_form_submit($form, &$form_state) {
  *   The name of the legacy field to be replaced.
  */
 function title_toggle_field_replacement($entity_type, $bundle, $legacy_field) {
-  $entity_info = entity_get_info($entity_type);
-  $info = $entity_info['field replacement'][$legacy_field];
+  $info = title_field_replacement_info($entity_type, $legacy_field);
+
+  if (!$info) {
+    return;
+  }
+
   $field_name = $info['field']['field_name'];
   $instance = field_info_instance($entity_type, $field_name, $bundle);
 

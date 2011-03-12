@@ -16,6 +16,7 @@
  * - Comment: subject
  *
  * @todo: tests
+ * @todo: API PHPdocs
  */
 
 module_load_include('inc', 'title', 'title.core');
@@ -24,8 +25,6 @@ module_load_include('inc', 'title', 'title.core');
  * Implements hook_entity_info_alter().
  */
 function title_entity_info_alter(&$info) {
-  $info = array_merge_recursive($info, _title_field_replacement_core_info());
-
   foreach ($info as $entity_type => $entity_info) {
     if ($entity_info['fieldable'] && !empty($info[$entity_type]['field replacement'])) {
       foreach ($info[$entity_type]['field replacement'] as $legacy_field => $data) {
@@ -47,8 +46,8 @@ function title_entity_info_alter(&$info) {
         );
 
         // Support add explicit support for entity_label().
-        if ($entity_info['entity keys']['label'] == $legacy_field) {
-          $entity_info['entity keys']['label callback'] = 'title_entity_label';
+        if (isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
+          $info[$entity_type]['label callback'] = 'title_entity_label';
         }
       }
     }
@@ -80,11 +79,11 @@ function title_field_replacement_info($entity_type, $legacy_field = NULL) {
  *   The entity label as a string value.
  */
 function title_entity_label($entity, $type, $langcode = NULL) {
-  $entity_info = entity_get_info($entity_type);
+  $entity_info = entity_get_info($type);
   $legacy_field = $entity_info['entity keys']['label'];
-  $info = $entity_info['field_replacement'][$legacy_field];
+  $info = $entity_info['field replacement'][$legacy_field];
   $langcode = field_language($type, $entity, $info['field']['field_name'], $langcode);
-  return $info['callbacks']['sync_get']($entity_type, $entity, $legacy_field, $info, $langcode);
+  return $info['callbacks']['sync_get']($type, $entity, $legacy_field, $info, $langcode);
 }
 
 /**
