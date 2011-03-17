@@ -47,8 +47,9 @@ function title_entity_info_alter(&$info) {
 
         // Support add explicit support for entity_label().
         // @todo Currently core does not pass the entity type to the label
-        // callback thus rendering impossible a genralized handling of the
-        // entity label (see http://drupal.org/node/1096446).
+        // callback thus rendering impossible a generalized handling of the
+        // entity label.
+        // @see http://drupal.org/node/1096446
         if (false && isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
           $info[$entity_type]['label callback'] = 'title_entity_label';
         }
@@ -110,9 +111,9 @@ function title_entity_insert($entity, $type) {
  * Implements hook_entity_update().
  *
  * Since Title is supposed to act as the first module on hook invocation, legacy
- * field values might be altered after reverse synchronization by subsequent
- * hook implementations. If this happens the field values must be synchronized
- * and the updated versions must be saved.
+ * field values might be altered by subsequent hook implementations after
+ * reverse synchronization has happened. If this happens the field values must
+ * be synchronized again and the updated versions must be saved.
  */
 function title_entity_update($entity, $type) {
   $fr_info = title_field_replacement_info($type);
@@ -180,7 +181,7 @@ function title_entitycache_load($entities, $type) {
  * different language might be specified while viewing the entity in which case
  * synchronization must be performed again.
  *
- * FIXME: $langcode is not passed along by entity_prepare_view() currently. We
+ * @todo $langcode is not passed along by entity_prepare_view() currently. We
  * will need to remove the default NULL value once this is fixed.
  * @see http://drupal.org/node/1089174
  */
@@ -410,6 +411,7 @@ function title_field_extra_fields_alter(&$info) {
       if (!empty($entity_info[$entity_type]['field replacement'])) {
         foreach ($entity_info[$entity_type]['field replacement'] as $field_name => $field_replacement_info) {
           if (title_field_replacement_enabled($entity_type, $bundle_name, $field_name)) {
+            // Remove the replaced legacy field.
             unset($info[$entity_type][$bundle_name]['form'][$field_name]);
           }
         }

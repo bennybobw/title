@@ -93,7 +93,7 @@ function title_test_phase_check($phase, $entity) {
 }
 
 /**
- * Implements hook_entity_prepare_view().
+ * Implements hook_entity_presave().
  */
 function title_test_entity_presave($entity, $type) {
   if ($type == 'test_entity') {
