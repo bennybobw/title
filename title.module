@@ -46,7 +46,10 @@ function title_entity_info_alter(&$info) {
         );
 
         // Support add explicit support for entity_label().
-        if (isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
+        // @todo Currently core does not pass the entity type to the label
+        // callback thus rendering impossible a genralized handling of the
+        // entity label (see http://drupal.org/node/1096446).
+        if (false && isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
           $info[$entity_type]['label callback'] = 'title_entity_label';
         }
       }

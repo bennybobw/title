@@ -84,8 +84,10 @@ class TitleFieldReplacementTestCase extends DrupalWebTestCase {
     }
 
     // Change the value stored into the label field to check entity_label().
-    $label = $this->randomName();
-    $entity->{$field_name}[LANGUAGE_NONE][0]['value'] = $label;
-    $this->assertIdentical(entity_label('test_entity', $entity), $label, t('entity_label() returns the expected value.'));
+    if (isset($info['label callback'])) {
+      $label = $this->randomName();
+      $entity->{$field_name}[LANGUAGE_NONE][0]['value'] = $label;
+      $this->assertIdentical(entity_label('test_entity', $entity), $label, t('entity_label() returns the expected value.'));
+    }
   }
 }
