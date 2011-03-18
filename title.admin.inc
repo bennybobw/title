@@ -40,6 +40,7 @@ function title_field_replacement_form($form, $form_state, $entity_type, $bundle,
   $entity_info = entity_get_info($entity_type);
   $info = $entity_info['field replacement'][$field_name];
   $instance = field_info_instance($entity_type, $info['field']['field_name'], $bundle_name);
+  $enabled = !empty($instance);
 
   $form['#entity_type'] = $entity_type;
   $form['#bundle'] = $bundle_name;
@@ -49,7 +50,8 @@ function title_field_replacement_form($form, $form_state, $entity_type, $bundle,
     '#type' => 'checkbox',
     '#title' => t('Replace %field with a field instance.', array('%field' => $field_name)),
     '#description' => t('If this is enabled the %field legacy field will be replaced with a regular field and will disappear from the <em>Manage fields</em> page. It will get back if the replacing field instance is deleted.', array('%field' => $field_name)),
-    '#default_value' => !empty($instance),
+    '#default_value' => $enabled,
+    '#disabled' => $enabled,
   );
 
   $form['actions'] = array('#type' => 'actions');
@@ -61,11 +63,13 @@ function title_field_replacement_form($form, $form_state, $entity_type, $bundle,
  * Process field replacement form subissions.
  */
 function title_field_replacement_form_submit($form, &$form_state) {
-  if (title_field_replacement_toggle($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
-    drupal_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
-  }
-  else {
-    drupal_set_message(t('Field replacement removed.'));
+  if ($form_state['values']['enabled'] != $form['enabled']['#default_value']) {
+    if (title_field_replacement_toggle($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
+      drupal_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
+    }
+    else {
+      drupal_set_message(t('Field replacement removed.'));
+    }
   }
   $form_state['redirect'] = _field_ui_bundle_admin_path($form['#entity_type'], $form['#bundle']) . '/fields';
 }
