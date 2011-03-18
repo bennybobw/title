@@ -61,47 +61,11 @@ function title_field_replacement_form($form, $form_state, $entity_type, $bundle,
  * Process field replacement form subissions.
  */
 function title_field_replacement_form_submit($form, &$form_state) {
-  if (title_toggle_field_replacement($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
+  if (title_field_replacement_toggle($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
     drupal_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
   }
   else {
     drupal_set_message(t('Field replacement removed.'));
   }
   $form_state['redirect'] = _field_ui_bundle_admin_path($form['#entity_type'], $form['#bundle']) . '/fields';
-}
-
-/**
- * Toggle field replacement for the given field.
- *
- * @param $entity_type
- *   The name of the entity type.
- * @param $bundle
- *   The bundle the legacy field belongs to.
- * @param $legacy_field
- *   The name of the legacy field to be replaced.
- */
-function title_toggle_field_replacement($entity_type, $bundle, $legacy_field) {
-  $info = title_field_replacement_info($entity_type, $legacy_field);
-
-  if (!$info) {
-    return;
-  }
-
-  $field_name = $info['field']['field_name'];
-  $instance = field_info_instance($entity_type, $field_name, $bundle);
-
-  if (empty($instance)) {
-    $field = field_info_field($field_name);
-    if (empty($field)) {
-      field_create_field($info['field']);
-    }
-    $info['instance']['entity_type'] = $entity_type;
-    $info['instance']['bundle'] = $bundle;
-    field_create_instance($info['instance']);
-    return TRUE;
-  }
-  else {
-    field_delete_instance($instance);
-    return FALSE;
-  }
 }

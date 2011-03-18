@@ -25,18 +25,18 @@ class TitleFieldReplacementTestCase extends DrupalWebTestCase {
    * Test field replacement API.
    */
   function testFieldReplacementAPI() {
-    module_load_include('inc', 'title', 'title.admin');
-
     $info = entity_get_info('test_entity');
     $label_key = $info['entity keys']['label'];
     $field_name = $label_key . '_field';
-    title_toggle_field_replacement('test_entity', 'test_bundle', $label_key);
+
+    // Enable field replacement for the test entity.
+    title_field_replacement_toggle('test_entity', 'test_bundle', $label_key);
 
     $i = 0;
     $entity = field_test_create_stub_entity(FALSE, FALSE);
 
     while ($i++ <= 1) {
-      // The first time the entity gets greated the second time gets updated.
+      // The first time the entity gets created the second time gets updated.
       title_test_entity_save($entity);
 
       // Check that the replacing field value has been synchronized on save.
