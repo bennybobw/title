@@ -69,7 +69,7 @@ class TitleFieldReplacementTestCase extends DrupalWebTestCase {
 
     $this->assertNotIdentical($record->{$label_key}, $entity->{$label_key}, t('Entity label has been changed.'));
 
-    // Clear field cache so we synchrboization can be performed on field attach
+    // Clear field cache so synchronization can be performed on field attach
     // load.
     cache_clear_all('*', 'cache_field');
 
