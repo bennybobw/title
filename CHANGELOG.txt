@@ -1,4 +1,20 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #924968 by plach: Updated the change log.
+Issue #924968 by plach: Improved comments/PHP docs.
+Issue #924968 by plach: Introduced tests for field replacement UI.
+Issue #924968 by plach: Fixed field replacement checkbox broken.
+Issue #924968 by plach: Polished API as title_field_replacement_toggle does not
+  belong to title.admin.inc.
+Issue #924968 by plach: Fixed comments/PHP docs.
+Issue #924968 by plach: Disabled entity_label() support until #1096446 is fixed.
+Issue #924968 by plach: Introduced tests for field replacement workflow.
+Issue #924968 by plach: Moved administration code into title.admin.inc.
+Issue #924968 by plach: Added entity_label() support.
+Issue #924968 by plach: Fixed resave needed if field values altered before save.
+Issue #924968 by plach: Fixed entity forms to support nested subforms.
+Issue #924968 by plach: Added PHP docs.
+Issue #924968 by plach, das-peter, sun, fago, klonos: Introduced field
+  replacement API and UI.
 by sun: Initial baseline of module files.
