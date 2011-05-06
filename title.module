@@ -127,7 +127,7 @@ function title_entity_update($entity, $type) {
     list(, , $bundle) = entity_extract_ids($type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
-      if ($entity->{$legacy_field} !== $entity->field_replacement->{$legacy_field} && title_field_replacement_enabled($type, $bundle, $legacy_field)) {
+      if (isset($entity->{$legacy_field}) && $entity->{$legacy_field} !== $entity->field_replacement->{$legacy_field} && title_field_replacement_enabled($type, $bundle, $legacy_field)) {
         title_field_sync_set($type, $entity, $legacy_field, $info);
         $update = TRUE;
       }

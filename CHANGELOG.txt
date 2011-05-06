@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1141674 by plach | manveru: Fixed Notices about missing $description.
 Issue #924968 by plach: Updated the change log.
 Issue #924968 by plach: Improved comments/PHP docs.
 Issue #924968 by plach: Introduced tests for field replacement UI.
