@@ -40,48 +40,52 @@ function title_entity_info() {
     ),
   );
 
-  $info['taxonomy_term'] = array(
-    'field replacement' => array(
-      'name' => array(
-        'field' => $field,
-        'instance' => array(
-          'label' => t('Name'),
-          'description' => t('A field replacing taxonomy term name.'),
-        ) + $instance,
-      ),
-      'description' => array(
-        'field' => array(
-          'type' => 'text_with_summary',
-        ) + $field,
-        'instance' => array(
-          'required' => FALSE,
-          'label' => t('Description'),
-          'description' => t('A field replacing taxonomy term description.'),
-          'settings' => array(
-            'text_processing' => 1,
+  if (module_exists('taxonomy')) {
+    $info['taxonomy_term'] = array(
+      'field replacement' => array(
+        'name' => array(
+          'field' => $field,
+          'instance' => array(
+            'label' => t('Name'),
+            'description' => t('A field replacing taxonomy term name.'),
+          ) + $instance,
+        ),
+        'description' => array(
+          'field' => array(
+            'type' => 'text_with_summary',
+          ) + $field,
+          'instance' => array(
+            'required' => FALSE,
+            'label' => t('Description'),
+            'description' => t('A field replacing taxonomy term description.'),
+            'settings' => array(
+              'text_processing' => 1,
+            ),
+          ) + $instance,
+          'callbacks' => array(
+            'submit' => 'title_field_term_description_submit',
           ),
-        ) + $instance,
-        'callbacks' => array(
-          'submit' => 'title_field_term_description_submit',
-        ),
-        'additional keys' => array(
-          'format' => 'format',
+          'additional keys' => array(
+            'format' => 'format',
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
-  $info['comment'] = array(
-    'field replacement' => array(
-      'subject' => array(
-        'field' => $field,
-        'instance' => array(
-          'label' => t('Subject'),
-          'description' => t('A field replacing comment subject.'),
-        ) + $instance,
+  if (module_exists('comment')) {
+    $info['comment'] = array(
+      'field replacement' => array(
+        'subject' => array(
+          'field' => $field,
+          'instance' => array(
+            'label' => t('Subject'),
+            'description' => t('A field replacing comment subject.'),
+          ) + $instance,
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   return $info;
 }
