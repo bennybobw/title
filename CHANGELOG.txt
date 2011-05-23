@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1116586 by plach | tte: Fixed Exception when a node's title is not
+  converted immediately.
 Issue #1138646 by plach | joostvdl, sun: Fixed Notice: Undefined index: label in
   entity_get_info().
 Issue #1141674 by plach | manveru: Fixed Notices about missing $description.

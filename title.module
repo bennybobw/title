@@ -90,8 +90,15 @@ function title_entity_label($entity, $type, $langcode = NULL) {
   $entity_info = entity_get_info($type);
   $legacy_field = $entity_info['entity keys']['label'];
   $info = $entity_info['field replacement'][$legacy_field];
-  $langcode = field_language($type, $entity, $info['field']['field_name'], $langcode);
-  return $info['callbacks']['sync_get']($type, $entity, $legacy_field, $info, $langcode);
+  list(, , $bundle) = entity_extract_ids($type, $entity);
+
+  if (title_field_replacement_enabled($type, $bundle, $legacy_field)) {
+    $langcode = field_language($type, $entity, $info['field']['field_name'], $langcode);
+    return $info['callbacks']['sync_get']($type, $entity, $legacy_field, $info, $langcode);
+  }
+  else {
+    return $entity->{$legacy_field};
+  }
 }
 
 /**
