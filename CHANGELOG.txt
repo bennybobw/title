@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1157438 by das-peter: Fixed Reset sync cache on entitycache reset.
 Issue #1116586 by plach | tte: Fixed Exception when a node's title is not
   converted immediately.
 Issue #1138646 by plach | joostvdl, sun: Fixed Notice: Undefined index: label in

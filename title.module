@@ -186,6 +186,18 @@ function title_entitycache_load($entities, $type) {
 }
 
 /**
+ * Implements hook_entitycache_reset().
+ *
+ * If the entity cache is reseted the field sync has to be done again.
+ */
+function title_entitycache_reset($ids, $entity_type) {
+  $sync = &drupal_static('title_entity_sync', array());
+  foreach ($ids as $id) {
+    unset($sync[$entity_type][$id]);
+  }
+}
+
+/**
  * Implements hook_entity_prepare_view().
  *
  * On load synchronization is performed using the current display language. A
