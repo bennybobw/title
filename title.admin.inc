@@ -66,6 +66,7 @@ function title_field_replacement_form_submit($form, &$form_state) {
   if ($form_state['values']['enabled'] != $form['enabled']['#default_value']) {
     if (title_field_replacement_toggle($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
       drupal_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
+      title_field_replacement_batch_set($form['#entity_type'], $form['#bundle'], $form['#field_name']);
     }
     else {
       drupal_set_message(t('Field replacement removed.'));

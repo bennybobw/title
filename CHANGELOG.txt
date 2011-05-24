@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1146724 by plach | das-peter, joostvdl: Fixed Replacing field values are
+  not initialized.
 Issue #1157438 by das-peter: Fixed Reset sync cache on entitycache reset.
 Issue #1116586 by plach | tte: Fixed Exception when a node's title is not
   converted immediately.
