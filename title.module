@@ -45,11 +45,7 @@ function title_entity_info_alter(&$info) {
         );
 
         // Support add explicit support for entity_label().
-        // @todo Currently core does not pass the entity type to the label
-        // callback thus making impossible a generalized handling of the entity
-        // label.
-        // @see http://drupal.org/node/1096446
-        if (false && isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
+        if (isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
           $info[$entity_type]['label callback'] = 'title_entity_label';
         }
       }
@@ -202,12 +198,8 @@ function title_entitycache_reset($ids, $entity_type) {
  * On load synchronization is performed using the current display language. A
  * different language might be specified while viewing the entity in which case
  * synchronization must be performed again.
- *
- * @todo $langcode is not passed along by entity_prepare_view() currently. We
- * will need to remove the default NULL value once this is fixed.
- * @see http://drupal.org/node/1089174
  */
-function title_entity_prepare_view($entities, $type, $langcode = NULL) {
+function title_entity_prepare_view($entities, $type, $langcode) {
   foreach ($entities as &$entity) {
     title_entity_sync($type, $entity, $langcode);
   }
@@ -499,6 +491,7 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
           $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
         }
 
+        drupal_static_reset('field_language');
         title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
