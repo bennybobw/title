@@ -565,3 +565,38 @@ function title_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
   module_load_include('inc', 'title', 'title.admin');
   title_form_field_ui_overview($form, $form_state);
 }
+
+/**
+ * Implements hook_tokens_alter().
+ *
+ * Make sure tokens are properly translated.
+ */
+function title_tokens_alter(array &$replacements, array $context) {
+  $fr_info = title_field_replacement_info($context['type']);
+  if ($fr_info && !empty($context['data'][$context['type']])) {
+    $entity = $context['data'][$context['type']];
+    $options = $context['options'];
+
+    $langcode = NULL;
+    if (isset($options['language'])) {
+      $langcode = $options['language']->language;
+    }
+
+    if ($fr_info) {
+      foreach ($fr_info as $legacy_field => $info) {
+        if (title_field_replacement_enabled($context['type'], $entity->type, $legacy_field)) {
+          if (isset($context['tokens'][$legacy_field])) {
+            title_field_sync_get($context['type'], $entity, $legacy_field, $info, $langcode);
+            $item = $entity->{$legacy_field};
+            if (!empty($item)) {
+              if (is_array($item)) {
+                $item = reset($item);
+              }
+              $replacements[$context['tokens'][$legacy_field]] = $item;
+            }
+          }
+        }
+      }
+    }
+  }
+}

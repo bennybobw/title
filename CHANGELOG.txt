@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1155128 by das-peter | Dave Reid, plach: Enhanced support for tokens.
 Issue #1169394 by plach: Synchronized code after core fixes.
 Issue #1146724 by plach | das-peter, joostvdl: Fixed Replacing field values are
   not initialized.
