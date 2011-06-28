@@ -336,6 +336,7 @@ function title_field_replacement_init($entity_type, $bundle, $legacy_field, $sta
     foreach ($entities as $id => $entity) {
       list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
       if ($entity_bundle == $bundle) {
+        field_attach_presave($entity_type, $entity);
         field_attach_update($entity_type, $entity);
       }
     }

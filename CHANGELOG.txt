@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1200320 by das-peter: Fixed Call field_attach_presave() before
+  field_attach_update() in field replacement batch.
 Issue #1155128 by das-peter | Dave Reid, plach: Enhanced support for tokens.
 Issue #1169394 by plach: Synchronized code after core fixes.
 Issue #1146724 by plach | das-peter, joostvdl: Fixed Replacing field values are
