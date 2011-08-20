@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1210670 by claudiu.cristea, das-peter | vasike: Fixed Entity translation
+  errors for Taxonomies entities.
 Issue #1200320 by das-peter: Fixed Call field_attach_presave() before
   field_attach_update() in field replacement batch.
 Issue #1155128 by das-peter | Dave Reid, plach: Enhanced support for tokens.

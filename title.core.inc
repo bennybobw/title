@@ -126,8 +126,13 @@ function title_field_text_with_summary_sync_get($entity_type, $entity, $legacy_f
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
   $wrapper->language($langcode);
   $field_name = $info['field']['field_name'];
-  $entity->{$format_key} = $wrapper->{$field_name}->format->raw();
-  return $wrapper->{$field_name}->value->raw();
+  // Return values only if there is any available to process for the current
+  // language.
+  if (is_array($wrapper->{$field_name}->value())) {
+    $entity->{$format_key} = $wrapper->{$field_name}->format->raw();
+    return $wrapper->{$field_name}->value->raw();
+  }
+  return NULL;
 }
 
 /**
