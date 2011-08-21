@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1219860 by plach, claudiu.cristea: Fixed Undefined index 'format'.
 Issue #1210670 by claudiu.cristea, das-peter | vasike: Fixed Entity translation
   errors for Taxonomies entities.
 Issue #1200320 by das-peter: Fixed Call field_attach_presave() before
