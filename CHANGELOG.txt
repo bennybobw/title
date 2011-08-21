@@ -1,6 +1,9 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1229892 by plach | chrisdolby: Fixed Strict warning: Only variables
+  should be assigned by reference in title_field_attach_submit() - line 482 of
+  title.module.
 Issue #1219860 by plach, claudiu.cristea: Fixed Undefined index 'format'.
 Issue #1210670 by claudiu.cristea, das-peter | vasike: Fixed Entity translation
   errors for Taxonomies entities.

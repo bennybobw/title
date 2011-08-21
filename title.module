@@ -479,7 +479,7 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
 
   if (!empty($fr_info)) {
     $values = &$form_state['values'];
-    $values = &drupal_array_get_nested_value($values, $form['#parents']);
+    $values = drupal_array_get_nested_value($values, $form['#parents']);
     $fr_info = title_field_replacement_info($entity_type);
 
     foreach ($fr_info as $legacy_field => $info) {
