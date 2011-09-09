@@ -1,12 +1,20 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+
+
+Title 7.x-1.0-alpha2, 2011-09-09
+--------------------------------
 Issue #1229892 by plach | chrisdolby: Fixed Strict warning: Only variables
   should be assigned by reference in title_field_attach_submit() - line 482 of
   title.module.
 Issue #1219860 by plach, claudiu.cristea: Fixed Undefined index 'format'.
 Issue #1210670 by claudiu.cristea, das-peter | vasike: Fixed Entity translation
   errors for Taxonomies entities.
+
+
+Title 7.x-1.0-alpha1, 2011-09-07
+--------------------------------
 Issue #1200320 by das-peter: Fixed Call field_attach_presave() before
   field_attach_update() in field replacement batch.
 Issue #1155128 by das-peter | Dave Reid, plach: Enhanced support for tokens.
