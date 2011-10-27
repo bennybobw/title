@@ -187,8 +187,15 @@ function title_entitycache_load($entities, $type) {
  */
 function title_entitycache_reset($ids, $entity_type) {
   $sync = &drupal_static('title_entity_sync', array());
-  foreach ($ids as $id) {
-    unset($sync[$entity_type][$id]);
+  if (!empty($ids)) {
+    // Clear specific ids.
+    foreach ($ids as $id) {
+      unset($sync[$entity_type][$id]);
+    }
+  }
+  elseif (!empty($sync[$entity_type])) {
+    // Reset cache for an entity_type.
+    $sync[$entity_type] = array();
   }
 }
 

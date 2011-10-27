@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1323288 by das-peter: Fixed entitycache integration.
 
 
 Title 7.x-1.0-alpha2, 2011-09-09
