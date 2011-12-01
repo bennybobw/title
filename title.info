@@ -1,6 +1,7 @@
 name = Title
 description = Replaces entity legacy fields with regular fields.
 core = 7.x
+package = Fields
 files[] = title.module
 files[] = tests/title.test
 dependencies[] = entity

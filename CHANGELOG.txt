@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1357220 by colan: Fixed Module should be listed in the Fields package.
 Issue #1323288 by das-peter: Fixed entitycache integration.
 
 
