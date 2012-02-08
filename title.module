@@ -532,11 +532,13 @@ function title_menu() {
             'access arguments' => array('administer site configuration'),
           );
 
-          $items["$path/fields/replace"] = array(
+          $path = "$path/fields/replace/%";
+          $field_arg = count(explode('/', $path)) - 1;
+          $items[$path] = array(
             'load arguments' => array(),
             'title' => 'Replace fields',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('title_field_replacement_form', $entity_type, $bundle_arg),
+            'page arguments' => array('title_field_replacement_form', $entity_type, $bundle_arg, $field_arg),
             'file' => 'title.admin.inc',
           ) + $access;
         }
