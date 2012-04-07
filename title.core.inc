@@ -26,6 +26,11 @@ function title_entity_info() {
     'widget' => array(
       'weight' => -5,
     ),
+    'display' => array(
+      'default' => array(
+        'type' => 'hidden',
+      ),
+    ),
   );
 
   $info['node'] = array(
@@ -49,6 +54,7 @@ function title_entity_info() {
             'label' => t('Name'),
             'description' => t('A field replacing taxonomy term name.'),
           ) + $instance,
+          'preprocess_key' => 'term_name',
         ),
         'description' => array(
           'field' => array(
@@ -82,6 +88,7 @@ function title_entity_info() {
             'label' => t('Subject'),
             'description' => t('A field replacing comment subject.'),
           ) + $instance,
+          'preprocess_key' => 'title',
         ),
       ),
     );
@@ -146,4 +153,49 @@ function title_field_text_with_summary_sync_set($entity_type, $entity, $legacy_f
   $wrapper = entity_metadata_wrapper($entity_type, $entity);
   $wrapper->language($langcode);
   $wrapper->{$info['field']['field_name']}->set($value);
+}
+
+/**
+ * Process variables for page.tpl.php.
+ */
+function title_process_page(&$variables) {
+  // Ugly but necessary: there is no standardized way to tell if the current
+  // page is an entity view page. This information should be injected here in
+  // some form by entity-defining modules.
+  $entity_types = array(
+    'comment' => 1,
+    'node' => 1,
+    'taxonomy_term' => 2,
+  );
+
+  foreach ($entity_types as $entity_type => $position) {
+    if ($entity = menu_get_object($entity_type, $position)) {
+      break;
+    }
+  }
+
+  if ($entity) {
+    title_field_replacement_hide_label($entity_type, $entity, $variables, TRUE);
+  }
+}
+
+/**
+ * Process variables for node.tpl.php.
+ */
+function title_process_node(&$variables) {
+  title_field_replacement_hide_label('node', $variables['node'], $variables);
+}
+
+/**
+ * Process variables for taxonomy-term.tpl.php.
+ */
+function title_process_taxonomy_term(&$variables) {
+  title_field_replacement_hide_label('taxonomy_term', $variables['term'], $variables);
+}
+
+/**
+ * Process variables for comment.tpl.php.
+ */
+function title_process_comment(&$variables) {
+  title_field_replacement_hide_label('comment', $variables['comment'], $variables);
 }
