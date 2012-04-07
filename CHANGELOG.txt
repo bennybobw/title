@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1362790 by colan, amateescu: Fixed Undefined property: stdClass::$title
+  in title_entity_update().
 Issue #1433060 by plach: Added Allow to use entity label fields in the entity
   content area.
 Issue #1367118 by plach | BrightBold: Fixed Wrong menu item declaration for the
