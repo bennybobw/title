@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1608980 by helior: Fixed Possible undefined indexes in
+  title_field_replacement_info().
 Issue #1362790 by colan, amateescu: Fixed Undefined property: stdClass::$title
   in title_entity_update().
 Issue #1433060 by plach: Added Allow to use entity label fields in the entity

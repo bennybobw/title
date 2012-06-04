@@ -67,7 +67,13 @@ function title_field_replacement_info($entity_type, $legacy_field = NULL) {
   if (empty($info['field replacement'])) {
     return FALSE;
   }
-  return isset($legacy_field) ? $info['field replacement'][$legacy_field] : $info['field replacement'];
+
+  if (isset($legacy_field)) {
+    return isset($info['field replacement'][$legacy_field]) ? $info['field replacement'][$legacy_field] : FALSE;
+  }
+  else {
+    return $info['field replacement'];
+  }
 }
 
 /**
