@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1586002 by plach, Pisco: (follow-up) Fixed notices when changing node
+  language.
 
 
 Title 7.x-1.0-alpha3, 2012-06-05
