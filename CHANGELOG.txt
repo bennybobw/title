@@ -1,6 +1,10 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+
+
+Title 7.x-1.0-alpha3, 2012-06-05
+--------------------------------
 Issue #1586002 by plach, Pisco | liquidcms: Fixed Entity language handling
   broken.
 Issue #1608980 by helior: Fixed Possible undefined indexes in
