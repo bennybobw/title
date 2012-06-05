@@ -445,6 +445,10 @@ function title_field_sync_set($entity_type, $entity, $legacy_field, $info) {
 /**
  * Provide the original entity language.
  *
+ * If a language property is defined for the current entity we synchronize the
+ * field value using the entity language, otherwise we fall back to
+ * LANGUAGE_NONE.
+ *
  * @param $entity_type
  * @param $entity
  *
@@ -452,15 +456,20 @@ function title_field_sync_set($entity_type, $entity, $legacy_field, $info) {
  *   A language code
  */
 function title_entity_language($entity_type, $entity) {
-  // If a language property is defined for the current entity we synchronize
-  // the field value using the entity language, otherwise we fall back to
-  // LANGUAGE_NONE.
-  try {
-    return entity_metadata_wrapper($entity_type, $entity)->language->value();
+  if (module_exists('entity_translation')) {
+    $handler = entity_translation_get_handler($entity_type, $entity);
+    $langcode = $handler->getLanguage();
   }
-  catch (EntityMetadataWrapperException $e) {
-    return LANGUAGE_NONE;
+  else {
+    // If a language property is defined for the current entity we synchronize
+    // the field value using the entity language, otherwise we fall back to
+    // LANGUAGE_NONE.
+    try {
+      $langcode = entity_metadata_wrapper($entity_type, $entity)->language->value();
+    }
+    catch (EntityMetadataWrapperException $e) {}
   }
+  return !empty($langcode) ? $langcode : LANGUAGE_NONE;
 }
 
 /**
@@ -495,19 +504,24 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
     $values = &$form_state['values'];
     $values = drupal_array_get_nested_value($values, $form['#parents']);
     $fr_info = title_field_replacement_info($entity_type);
+    $langcode = title_entity_language($entity_type, $entity);
+    list($id) = entity_extract_ids($entity_type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
       if (!empty($form[$legacy_field]['#field_replacement'])) {
         $field_name = $info['field']['field_name'];
-        $langcode = $form[$field_name]['#language'];
 
-        // Give a chance to operate on submitted values either.
-        if (!empty($info['callbacks']['submit'])) {
-          $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
+        // Perform synchronization only when dealing with the original values or
+        // when creating a new entity.
+        if (empty($id) || $langcode == $form[$field_name]['#language']) {
+          // Give a chance to operate on submitted values either.
+          if (!empty($info['callbacks']['submit'])) {
+            $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
+          }
+
+          drupal_static_reset('field_language');
+          title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
         }
-
-        drupal_static_reset('field_language');
-        title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
   }

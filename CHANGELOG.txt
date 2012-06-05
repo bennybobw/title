@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1586002 by plach, Pisco | liquidcms: Fixed Entity language handling
+  broken.
 Issue #1608980 by helior: Fixed Possible undefined indexes in
   title_field_replacement_info().
 Issue #1362790 by colan, amateescu: Fixed Undefined property: stdClass::$title

@@ -113,18 +113,14 @@ function title_field_term_description_submit(&$values, $legacy_field, $info, $la
  * Sync callback for the text field type.
  */
 function title_field_text_sync_get($entity_type, $entity, $legacy_field, $info, $langcode) {
-  $wrapper = entity_metadata_wrapper($entity_type, $entity);
-  $wrapper->language($langcode);
-  return $wrapper->{$info['field']['field_name']}->raw();
+  return $entity->{$info['field']['field_name']}[$langcode][0]['value'];
 }
 
 /**
  * Sync back callback for the text field type.
  */
 function title_field_text_sync_set($entity_type, $entity, $legacy_field, $info, $langcode) {
-  $wrapper = entity_metadata_wrapper($entity_type, $entity);
-  $wrapper->language($langcode);
-  $wrapper->{$info['field']['field_name']}->set($entity->{$legacy_field});
+  $entity->{$info['field']['field_name']}[$langcode][0]['value'] = $entity->{$legacy_field};
 }
 
 /**
@@ -132,14 +128,12 @@ function title_field_text_sync_set($entity_type, $entity, $legacy_field, $info, 
  */
 function title_field_text_with_summary_sync_get($entity_type, $entity, $legacy_field, $info, $langcode) {
   $format_key = $info['additional keys']['format'];
-  $wrapper = entity_metadata_wrapper($entity_type, $entity);
-  $wrapper->language($langcode);
   $field_name = $info['field']['field_name'];
   // Return values only if there is any available to process for the current
   // language.
-  if (is_array($wrapper->{$field_name}->value())) {
-    $entity->{$format_key} = $wrapper->{$field_name}->format->raw();
-    return $wrapper->{$field_name}->value->raw();
+  if (!empty($entity->{$field_name}[$langcode]) && is_array($entity->{$field_name}[$langcode])) {
+    $entity->{$format_key} = $entity->{$field_name}[$langcode][0]['format'];
+    return $entity->{$field_name}[$langcode][0]['value'];
   }
   return NULL;
 }
@@ -149,10 +143,8 @@ function title_field_text_with_summary_sync_get($entity_type, $entity, $legacy_f
  */
 function title_field_text_with_summary_sync_set($entity_type, $entity, $legacy_field, $info, $langcode) {
   $format_key = $info['additional keys']['format'];
-  $value = array('value' => $entity->{$legacy_field}, 'format' => $entity->{$format_key});
-  $wrapper = entity_metadata_wrapper($entity_type, $entity);
-  $wrapper->language($langcode);
-  $wrapper->{$info['field']['field_name']}->set($value);
+  $item = array('value' => $entity->{$legacy_field}, 'format' => $entity->{$format_key});
+  $entity->{$info['field']['field_name']}[$langcode][0] = $item;
 }
 
 /**
