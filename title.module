@@ -461,13 +461,7 @@ function title_entity_language($entity_type, $entity) {
     $langcode = $handler->getLanguage();
   }
   else {
-    // If a language property is defined for the current entity we synchronize
-    // the field value using the entity language, otherwise we fall back to
-    // LANGUAGE_NONE.
-    try {
-      $langcode = entity_metadata_wrapper($entity_type, $entity)->language->value();
-    }
-    catch (EntityMetadataWrapperException $e) {}
+    $langcode = entity_language($entity_type, $entity);
   }
   return !empty($langcode) ? $langcode : LANGUAGE_NONE;
 }
@@ -505,23 +499,18 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
     $values = drupal_array_get_nested_value($values, $form['#parents']);
     $fr_info = title_field_replacement_info($entity_type);
     $langcode = title_entity_language($entity_type, $entity);
-    list($id) = entity_extract_ids($entity_type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
       if (!empty($form[$legacy_field]['#field_replacement'])) {
         $field_name = $info['field']['field_name'];
 
-        // Perform synchronization only when dealing with the original values or
-        // when creating a new entity.
-        if (empty($id) || $langcode == $form[$field_name]['#language']) {
-          // Give a chance to operate on submitted values either.
-          if (!empty($info['callbacks']['submit'])) {
-            $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
-          }
-
-          drupal_static_reset('field_language');
-          title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
+        // Give a chance to operate on submitted values either.
+        if (!empty($info['callbacks']['submit'])) {
+          $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
         }
+
+        drupal_static_reset('field_language');
+        title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
   }
