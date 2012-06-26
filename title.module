@@ -480,7 +480,12 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
   $fr_info = title_field_replacement_info($entity_type);
 
   if (!empty($fr_info)) {
-    $values = &$form_state['values'];
+    // We copy (rather than reference) the values from $form_state because the
+    // subsequent call to drupal_array_get_nested_value() is destructive and
+    // will affect other hooks relying on data in $form_state. At the end, we
+    // copy any modified value back into the $form_state array using
+    // drupal_array_set_nested_value().
+    $values = $form_state['values'];
     $values = drupal_array_get_nested_value($values, $form['#parents']);
     $fr_info = title_field_replacement_info($entity_type);
     $langcode = title_entity_language($entity_type, $entity);
@@ -498,6 +503,8 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
         title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
+
+    drupal_array_set_nested_value($form_state['values'], $form['#parents'], $values);
   }
 }
 
