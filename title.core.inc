@@ -43,6 +43,7 @@ function title_entity_info() {
         ) + $instance,
       ),
     ),
+    'efq bundle conditions' => TRUE,
   );
 
   if (module_exists('taxonomy')) {

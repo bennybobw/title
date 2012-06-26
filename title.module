@@ -281,10 +281,20 @@ function title_field_replacement_batch_set($entity_type, $bundle, $legacy_field)
  * Batch operation: initialize a batch of replacing field values.
  */
 function title_field_replacement_batch($entity_type, $bundle, $legacy_field, &$context) {
+  $info = entity_get_info($entity_type);
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', $entity_type);
+
+  // There is no general way to tell if an entity supports bundle conditions
+  // (for instance taxonomy terms and comments do not), hence we may need to
+  // loop over all the entities of the given type.
+  if (!empty($info['efq bundle conditions'])) {
+    $query->entityCondition('bundle', $bundle);
+  }
+
   if (empty($context['sandbox'])) {
-    $query = new EntityFieldQuery();
-    $total = $query
-      ->entityCondition('entity_type', $entity_type)
+    $count_query = clone $query;
+    $total = $count_query
       ->count()
       ->execute();
 
@@ -293,8 +303,18 @@ function title_field_replacement_batch($entity_type, $bundle, $legacy_field, &$c
     $context['sandbox']['total'] = $total;
   }
 
-  $step = 5;
-  $context['sandbox']['progress'] += title_field_replacement_init($entity_type, $bundle, $legacy_field, $step * $context['sandbox']['steps']++, $step);
+  $step = variable_get('title_field_replacement_batch_size', 5);
+  $start = $step * $context['sandbox']['steps']++;
+  $results = $query
+    ->entityCondition('entity_type', $entity_type)
+    ->range($start, $step)
+    ->execute();
+
+  if (!empty($results[$entity_type])) {
+    $ids = array_keys($results[$entity_type]);
+    title_field_replacement_init($entity_type, $bundle, $legacy_field, $ids);
+    $context['sandbox']['progress'] += count($ids);
+  }
 
   if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
@@ -310,39 +330,23 @@ function title_field_replacement_batch($entity_type, $bundle, $legacy_field, &$c
  *   The bundle the legacy field belongs to.
  * @param $legacy_field
  *   The name of the legacy field to be replaced.
- * @param $start
- *   The first entity from the result set to return.
- * @param $length
- *   The number of entities to return from the result set.
+ * @param $ids
+ *   An array of entity IDs.
  *
  * @return
  *   The number of entities processed.
  */
-function title_field_replacement_init($entity_type, $bundle, $legacy_field, $start = 0, $length = 10) {
-  $query = new EntityFieldQuery();
-
-  $results = $query
-    ->entityCondition('entity_type', $entity_type)
-    ->range($start, $length)
-    ->execute();
-
-  if (!empty($results[$entity_type])) {
-    $GLOBALS['title_field_replacement_init'] = TRUE;
-    $entities = entity_load($entity_type, array_keys($results[$entity_type]));
-
-    foreach ($entities as $id => $entity) {
-      list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
-      if ($entity_bundle == $bundle) {
-        field_attach_presave($entity_type, $entity);
-        field_attach_update($entity_type, $entity);
-      }
+function title_field_replacement_init($entity_type, $bundle, $legacy_field, $ids) {
+  $GLOBALS['title_field_replacement_init'] = TRUE;
+  $entities = entity_load($entity_type, $ids);
+  foreach ($entities as $id => $entity) {
+    list(, , $entity_bundle) = entity_extract_ids($entity_type, $entity);
+    if ($entity_bundle == $bundle) {
+      field_attach_presave($entity_type, $entity);
+      field_attach_update($entity_type, $entity);
     }
-
-    unset($GLOBALS['title_field_replacement_init']);
-    return count($results[$entity_type]);
   }
-
-  return 0;
+  unset($GLOBALS['title_field_replacement_init']);
 }
 
 /**
