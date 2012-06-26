@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1631958 by plach | Goekmen: Fixed Undefined index: base path in
+  EntityTranslationDefaultHandler.
 Issue #1635006 by nikosnikos: Fixed Description summary desappear in taxonomy
   term.
 Issue #1528590 by torrance123, JonMcL: Fixed Reference to $form_state['values']
