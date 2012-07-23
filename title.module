@@ -399,7 +399,7 @@ function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALS
  *   The field language to use for the source value.
  */
 function title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode = NULL) {
-  if (isset($entity->{$legacy_field})) {
+  if (property_exists($entity, $legacy_field)) {
     // Save the legacy field value to LEGACY_FIELD_NAME_original.
     $entity->{$legacy_field . '_original'} = $entity->{$legacy_field};
     // Find out the actual language to use (field might be untranslatable).
@@ -425,7 +425,7 @@ function title_field_sync_get($entity_type, $entity, $legacy_field, $info, $lang
  *   The field language to use for the source value.
  */
 function title_field_sync_set($entity_type, $entity, $legacy_field, $info) {
-  if (isset($entity->{$legacy_field})) {
+  if (property_exists($entity, $legacy_field)) {
     $langcode = title_entity_language($entity_type, $entity);
     $info['callbacks']['sync_set']($entity_type, $entity, $legacy_field, $info, $langcode);
   }

@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1665006 by mikey_p: Fixed Doesn't work when legacy title field is NULL.
 Issue #1613514 by steven.wichers, Amitaibu: Fixed Importing nodes in bulk fail
   to create titles for all nodes after the first one.
 Issue #1644736 by plach: Fixed When initializing replaced fields all bundles are
