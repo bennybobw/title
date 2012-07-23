@@ -365,7 +365,7 @@ function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALS
   $langcode = field_valid_language($langcode, FALSE);
 
   // We do not need to perform this more than once.
-  if (!empty($sync[$entity_type][$id][$langcode][$set])) {
+  if (!empty($id) && !empty($sync[$entity_type][$id][$langcode][$set])) {
     return;
   }
 
