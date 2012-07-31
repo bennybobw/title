@@ -758,6 +758,16 @@ function title_field_replacement_hide_label($entity_type, $entity, &$variables, 
 }
 
 /**
+ * Implements hook_views_api().
+ */
+function title_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'title') . '/views',
+  );
+}
+
+/**
  * Implements hook_field_attach_create_bundle().
  *
  * Automatically attach the replacement field to the new bundle.
