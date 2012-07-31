@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1704536 by RoySegall, Amitaibu, plach: Attach title field automatically
+  when a new entity bundle is created.
 Issue #1699092 by plach: Fixed Notices when submitting an empty taxonomy term
   description.
 Issue #1665006 by mikey_p: Fixed Doesn't work when legacy title field is NULL.

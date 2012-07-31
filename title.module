@@ -552,6 +552,15 @@ function title_menu() {
     }
   }
 
+  $items['admin/config/content/title'] = array(
+    'title' => 'Title settings',
+    'description' => 'Settings for the Title module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('title_admin_settings_form'),
+    'access arguments' => array('administer content types'),
+    'file' => 'title.admin.inc',
+  );
+
   return $items;
 }
 
@@ -745,5 +754,36 @@ function title_field_replacement_hide_label($entity_type, $entity, &$variables, 
     // We cannot simply unset the variable value since this may cause templates
     // to throw notices.
     $variables[$key] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_field_attach_create_bundle().
+ *
+ * Automatically attach the replacement field to the new bundle.
+ */
+function title_field_attach_create_bundle($entity_type, $bundle) {
+  $entity_info = entity_get_info($entity_type);
+  $options = variable_get('title_auto_attach', array());
+
+  foreach (array_keys($entity_info['field replacement']) as $field_name) {
+    if (!isset($options[$entity_type . ':' . $field_name])) {
+      continue;
+    }
+
+    // Do not continue if the replacement field already exists.
+    if (field_info_instance($entity_type, $field_name, $bundle)) {
+      continue;
+    }
+
+    title_field_replacement_toggle($entity_type, $bundle, $field_name);
+
+    $params = array(
+      '@entity_name' => strtolower($entity_info['label']),
+      '@field_name' => $entity_info['field replacement'][$field_name]['field']['field_name'],
+      '@bundle_name' => $bundle,
+    );
+
+    drupal_set_message(t('The field @field_name was attached automatically to @entity_name - @bundle_name.', $params));
   }
 }
