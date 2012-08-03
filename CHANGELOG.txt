@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1709938 by Amitaibu: Prevented notice in title_field_attach_create_bundle().
 #1541414 by peximo, plach | int_ua: Added No 'Link this field to the original
   piece of content' option in Views UI for fields replaced with Title module.
 #1704536 by RoySegall, Amitaibu, plach: Attach title field automatically when a

@@ -774,6 +774,10 @@ function title_views_api() {
  */
 function title_field_attach_create_bundle($entity_type, $bundle) {
   $entity_info = entity_get_info($entity_type);
+  if (empty($entity_info['field replacement'])) {
+    return;
+  }
+
   $options = variable_get('title_auto_attach', array());
 
   foreach (array_keys($entity_info['field replacement']) as $field_name) {
