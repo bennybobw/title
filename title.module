@@ -491,7 +491,6 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
     // drupal_array_set_nested_value().
     $values = $form_state['values'];
     $values = drupal_array_get_nested_value($values, $form['#parents']);
-    $fr_info = title_field_replacement_info($entity_type);
     $langcode = title_entity_language($entity_type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
@@ -500,7 +499,7 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
 
         // Give a chance to operate on submitted values either.
         if (!empty($info['callbacks']['submit'])) {
-          $info['callbacks']['submit']($values, $legacy_field, $info, $langcode);
+          $info['callbacks']['submit']($entity_type, $entity, $legacy_field, $info, $langcode, $values);
         }
 
         drupal_static_reset('field_language');
