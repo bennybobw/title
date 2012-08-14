@@ -47,7 +47,7 @@ function title_module_implements_alter(&$implementations, $hook) {
  */
 function title_entity_info_alter(&$info) {
   foreach ($info as $entity_type => $entity_info) {
-    if ($entity_info['fieldable'] && !empty($info[$entity_type]['field replacement'])) {
+    if (!empty($entity_info['fieldable']) && !empty($info[$entity_type]['field replacement'])) {
       foreach ($info[$entity_type]['field replacement'] as $legacy_field => $data) {
         // Provide defaults for the replacing field name.
         $fr_info = &$info[$entity_type]['field replacement'][$legacy_field];

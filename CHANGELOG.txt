@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1396450 by logaritmisk, plach | mgifford: Fixed Notice: Undefined index:
+  fieldable in title_entity_info_alter() (line 28 of title/title.module).
 
 
 Title 7.x-1.0-alpha4, 2012-08-11
