@@ -1,6 +1,10 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+
+
+Title 7.x-1.0-alpha4, 2012-08-11
+--------------------------------
 #1708046 by plach | steinmb: Fixed Term description is overwritten.
 #1709938 by Amitaibu: Prevented notice in title_field_attach_create_bundle().
 #1541414 by peximo, plach | int_ua: Added No 'Link this field to the original
