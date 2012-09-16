@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1773514 by peximo: Added Module's configuration page.
 #1396450 by logaritmisk, plach | mgifford: Fixed Notice: Undefined index:
   fieldable in title_entity_info_alter() (line 28 of title/title.module).
 
