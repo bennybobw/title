@@ -154,7 +154,10 @@ class TitleFieldReplacementTestCase extends DrupalWebTestCase {
     $admin_user = $this->drupalCreateUser(array('administer content types', 'administer taxonomy'));
     $this->drupalLogin($admin_user);
 
-    $edit['title_auto_attach[]'] = array('taxonomy_term:name', 'taxonomy_term:description');
+    $edit = array(
+      "title_taxonomy_term[auto_attach][name]" => TRUE,
+      "title_taxonomy_term[auto_attach][description]" => TRUE,
+    );
     $this->drupalPost('admin/config/content/title', $edit, t('Save configuration'));
 
     $edit = array(
