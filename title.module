@@ -559,11 +559,21 @@ function title_menu() {
     'description' => 'Settings for the Title module.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('title_admin_settings_form'),
-    'access arguments' => array('administer content types'),
+    'access arguments' => array('administer site configuration'),
     'file' => 'title.admin.inc',
   );
 
   return $items;
+}
+
+/**
+ * Implements hook help.
+ */
+function title_help($path, $arg) {
+  switch ($path) {
+    case 'admin/config/content/title':
+      return '<p>' . t('The settings below allow to configure the <em>default</em> settings to be used when creating new replacing fields. It is even possibile to configure them so that the selected fields are created automatically when a new bundle is created.') . '</p>';
+  }
 }
 
 /**
