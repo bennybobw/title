@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1761142 by joel_osc, plach | no2e: Fixed Replaced taxonomy description:
+  can't delete content (but editing works).
 #1736476 by guillaumev: Made sure entity is accurate in title_entity_language().
 #1748008 by vasike: Replaced fields should inherit the legacy field access.
 #1808454 by plach: Fixed help and permissions for the admin settings.
