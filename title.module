@@ -471,6 +471,13 @@ function title_field_attach_form($entity_type, $entity, &$form, &$form_state, $l
   if (!empty($fr_info)) {
     foreach ($fr_info as $legacy_field => $info)  {
       if (isset($form[$legacy_field]) && title_field_replacement_enabled($entity_type, $bundle, $legacy_field)) {
+        // Inherit the access from the title widget, so that other modules
+        // restricting access to it keep working.
+        if (isset($form[$legacy_field]['#access'])) {
+          $form[$info['field']['field_name']]['#access'] = $form[$legacy_field]['#access'];
+        }
+        // Restrict access to the legacy field form element and mark it as
+        // replaced.
         $form[$legacy_field]['#access'] = FALSE;
         $form[$legacy_field]['#field_replacement'] = TRUE;
       }
