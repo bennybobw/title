@@ -19,6 +19,7 @@
  */
 
 module_load_include('inc', 'title', 'title.core');
+module_load_include('inc', 'title', 'title.field');
 
 /**
  * Implements hook_module_implements_alter().
