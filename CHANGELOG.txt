@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1849344 by peximo: Fixed Duplicate description element in taxonomy display
+  form.
 #1482052 by peximo | joel rotelli, epieddy: Fixed Undefined property:
   stdClass::$type dans title_tokens_alter().
 #1761142 by joel_osc, plach | no2e: Fixed Replaced taxonomy description:

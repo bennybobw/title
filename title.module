@@ -594,7 +594,7 @@ function title_field_extra_fields_alter(&$info) {
         foreach ($entity_info[$entity_type]['field replacement'] as $field_name => $field_replacement_info) {
           if (title_field_replacement_enabled($entity_type, $bundle_name, $field_name)) {
             // Remove the replaced legacy field.
-            unset($info[$entity_type][$bundle_name]['form'][$field_name]);
+            unset($info[$entity_type][$bundle_name]['form'][$field_name],  $info[$entity_type][$bundle_name]['display'][$field_name]);
           }
         }
       }
