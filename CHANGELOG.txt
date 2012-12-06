@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1482052 by peximo | joel rotelli, epieddy: Fixed Undefined property:
+  stdClass::$type dans title_tokens_alter().
 #1761142 by joel_osc, plach | no2e: Fixed Replaced taxonomy description:
   can't delete content (but editing works).
 #1736476 by guillaumev: Made sure entity is accurate in title_entity_language().
