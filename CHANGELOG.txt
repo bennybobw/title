@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1869228 by plach: Updated system dependencies.
 #1062814 by Andreas Radloff, jucallme | Scott J: Added Formatters.
 #1849344 by peximo: Fixed Duplicate description element in taxonomy display
   form.
