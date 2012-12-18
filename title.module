@@ -69,6 +69,10 @@ function title_entity_info_alter(&$info) {
 
         // Support add explicit support for entity_label().
         if (isset($entity_info['entity keys']['label']) && $entity_info['entity keys']['label'] == $legacy_field) {
+          // Store the original label callback for compatibility reasons.
+          if (isset($info[$entity_type]['label callback'])) {
+            $info[$entity_type]['label fallback']['title'] = $info[$entity_type]['label callback'];
+          }
           $info[$entity_type]['label callback'] = 'title_entity_label';
           $fr_info += array('preprocess_key' => $info[$entity_type]['entity keys']['label']);
         }
@@ -118,9 +122,14 @@ function title_entity_label($entity, $type, $langcode = NULL) {
   $info = $entity_info['field replacement'][$legacy_field];
   list(, , $bundle) = entity_extract_ids($type, $entity);
 
+  // If field replacement is enabled we use the replacing field value.
   if (title_field_replacement_enabled($type, $bundle, $legacy_field)) {
     $langcode = field_language($type, $entity, $info['field']['field_name'], $langcode);
     return $info['callbacks']['sync_get']($type, $entity, $legacy_field, $info, $langcode);
+  }
+  // Otherwise if we have a fallback defined we use the original label callback.
+  elseif (isset($entity_info['label fallback']['title']) && function_exists($entity_info['label fallback']['title'])) {
+    return $entity_info['label fallback']['title']($entity, $type, $langcode);
   }
   else {
     return $entity->{$legacy_field};
