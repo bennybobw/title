@@ -132,7 +132,7 @@ function title_entity_label($entity, $type, $langcode = NULL) {
     return $entity_info['label fallback']['title']($entity, $type, $langcode);
   }
   else {
-    return $entity->{$legacy_field};
+    return (property_exists($entity, $legacy_field)) ? $entity->{$legacy_field} : NULL;
   }
 }
 

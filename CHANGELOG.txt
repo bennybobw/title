@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1898618 by muka: Fixed Handle case when title property is not set (avoiding
+  error).
 #1885356 by peximo: Fixed Empty HTML class in Linked and wrapped format.
 #1865604 by GaëlG, plach: Fixed Title module overrides label callback (prevents
   term label localization).
