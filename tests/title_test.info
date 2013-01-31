@@ -6,4 +6,3 @@ hidden = TRUE
 dependencies[] = title
 dependencies[] = entity
 dependencies[] = entity_translation
-files[] = title_test.module
