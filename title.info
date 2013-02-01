@@ -3,7 +3,7 @@ description = Replaces entity legacy fields with regular fields.
 core = 7.x
 package = Fields
 configure = admin/config/content/title
-dependencies[] = system (> 7.14)
+dependencies[] = system (>7.14)
 
 files[] = title.module
 files[] = views/views_handler_title_field.inc
