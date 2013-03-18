@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+Issue #1269076 by plach, das-peter, danielnolde | renat: Fixed Translated
+  title_field replaces node->title with translated value.
 
 
 Title 7.x-1.0-alpha7, 2013-03-18
