@@ -1,6 +1,10 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+
+
+Title 7.x-1.0-alpha7, 2013-03-18
+--------------------------------
 #1919640 by peximo: Fixed Empty tag shown when the title field is displayed.
 #1869438 by jsacksick: Fixed hook_field_attach_create_bundle() implementation
   isn't correct.
