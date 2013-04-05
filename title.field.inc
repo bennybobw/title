@@ -107,7 +107,7 @@ function title_field_formatter_view($entity_type, $entity, $field, $instance, $l
   $wrap_tag = empty($settings['title_style']) ? '_none' : $settings['title_style'];
 
   if ($wrap_tag != '_none') {
-    $element = array(
+    $variables = array(
       'element' => array(
         '#tag' => $wrap_tag,
         '#value' => $output,
@@ -115,10 +115,10 @@ function title_field_formatter_view($entity_type, $entity, $field, $instance, $l
     );
 
     if (!empty($settings['title_class'])) {
-      $element['#attributes'] = array('class' => $settings['title_class']);
+      $variables['element']['#attributes'] = array('class' => $settings['title_class']);
     }
 
-    $output = theme('html_tag', $element);
+    $output = theme('html_tag', $variables);
   }
 
   $element = array(

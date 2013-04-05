@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1961810 by peximo | fcortez: Fixed Wrap tag classes are not being inserted.
 #1850866 by B-Prod: Fixed Undefined index 'format' in
   title_field_text_with_summary_sync_set().
 #1269076 by plach, das-peter, danielnolde | renat: Fixed Translated
