@@ -278,7 +278,9 @@ function title_entity_prepare_view($entities, $type, $langcode) {
  */
 function title_field_replacement_enabled($entity_type, $bundle, $legacy_field) {
   $info = title_field_replacement_info($entity_type, $legacy_field);
-  $instance = field_info_instance($entity_type, $info['field']['field_name'], $bundle);
+  if (!empty($info['field']['field_name'])) {
+    $instance = field_info_instance($entity_type, $info['field']['field_name'], $bundle);
+  }
   return !empty($instance);
 }
 

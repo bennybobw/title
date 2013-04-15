@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1907078 by sylus: Fixed Undefined index: field_name() in
+  title_field_replacement_enabled().
 #1961810 by peximo | fcortez: Fixed Wrap tag classes are not being inserted.
 #1850866 by B-Prod: Fixed Undefined index 'format' in
   title_field_text_with_summary_sync_set().
