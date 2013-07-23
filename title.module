@@ -203,7 +203,10 @@ function title_field_attach_update($entity_type, $entity) {
  * @see title_entity_load()
  */
 function title_field_attach_load($entity_type, $entities, $age, $options) {
-  // @todo: Do we need to handle revisions here?
+  // Allow values to re-sync when field_attach_load_revision() is called.
+  if ($age == FIELD_LOAD_REVISION) {
+    title_entity_sync_static_reset($entity_type, array_keys($entities));
+  }
   title_entity_load($entities, $entity_type);
 }
 
@@ -234,20 +237,10 @@ function title_entitycache_load($entities, $type) {
 /**
  * Implements hook_entitycache_reset().
  *
- * If the entity cache is reseted the field sync has to be done again.
+ * When the entity cache is reset the field sync has to be done again.
  */
 function title_entitycache_reset($ids, $entity_type) {
-  $sync = &drupal_static('title_entity_sync', array());
-  if (!empty($ids)) {
-    // Clear specific ids.
-    foreach ($ids as $id) {
-      unset($sync[$entity_type][$id]);
-    }
-  }
-  elseif (!empty($sync[$entity_type])) {
-    // Reset cache for an entity_type.
-    $sync[$entity_type] = array();
-  }
+  title_entity_sync_static_reset($entity_type, $ids);
 }
 
 /**
@@ -447,6 +440,26 @@ function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALS
         $function($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
+  }
+}
+
+/**
+ * Reset the list of entities whose fields have already been synchronized.
+ *
+ * @param $entity_type
+ *   The name of the entity type.
+ * @param $entity_ids
+ *   Either an array of entity IDs to reset or NULL to reset all.
+ */
+function title_entity_sync_static_reset($entity_type, $entity_ids = NULL) {
+  $sync = &drupal_static('title_entity_sync', array());
+  if (is_array($entity_ids)) {
+    foreach ($entity_ids as $id) {
+      unset($sync[$entity_type][$id]);
+    }
+  }
+  else {
+    unset($sync[$entity_type]);
   }
 }
 

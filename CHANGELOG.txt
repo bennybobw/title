@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1991712 by milesw: Fixed Title displays wrong revision using Revisioning
+  module.
 #1907078 by sylus: Fixed Undefined index: field_name() in
   title_field_replacement_enabled().
 #1961810 by peximo | fcortez: Fixed Wrap tag classes are not being inserted.
