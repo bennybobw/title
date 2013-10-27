@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1980520 by StoraH, pbz1912: Fixed Empty wrapper tags.
 #1920096 by Johnny vd Laar | GiorgosK: Fixed Title incompatibility with the Term
   reference widget
 #1991712 by milesw: Fixed Title displays wrong revision using Revisioning
