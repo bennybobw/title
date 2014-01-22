@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#1441224 by MiroslavBanov | OPIN: Fieldgroup and Title break Manage Fields UI.
 #1980520 by StoraH, pbz1912: Fixed Empty wrapper tags.
 #1920096 by Johnny vd Laar | GiorgosK: Fixed Title incompatibility with the Term
   reference widget
