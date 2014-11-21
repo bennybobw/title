@@ -1,6 +1,7 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#2286145 by plach: Prevent empty translations from being synced into the legacy field.
 #1772116 by duellj, GaëlG | f4o: Fixed Menu link title is not getting node title
   by default.
 #1779268 by ndobromirov | brycesenz: Undefined index: field_name in
