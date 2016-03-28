@@ -1,6 +1,8 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+#2040055 by flux423, cs_shadow, visabhishek, plach, OlyN: Fixed Notice:
+  Undefined index: safe_value in title_field_formatter_view().
 #2426105 by Peacog, jcisio: Fixed Views "Link this field to the original entity"
   doesn't work when using relationship.
 #2286147 by plach: Language fallback does not work when an entity translation is
