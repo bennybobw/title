@@ -1,6 +1,10 @@
 
 Title 7.x-1.x, xxxx-xx-xx
 -------------------------
+
+
+Title 7.x-1.0-alpha8, 2016-03-28
+--------------------------------
 #2465141 by DuaelFr, Matthijs, jfrederick: Used entity_uri() options if given.
 #2602568 by sdstyles: Fixed title_entity_label() should be documented as
   callback implementation.
