@@ -61,11 +61,11 @@ function title_field_replacement_form($form, $form_state, $entity_type, $bundle,
 function title_field_replacement_form_submit($form, &$form_state) {
   if ($form_state['values']['enabled'] != $form['enabled']['#default_value']) {
     if (title_field_replacement_toggle($form['#entity_type'], $form['#bundle'], $form['#field_name'])) {
-      drupal_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
+      backdrop_set_message(t('%field replaced with a field instance.', array('%field' => $form['#field_name'])));
       title_field_replacement_batch_set($form['#entity_type'], $form['#bundle'], $form['#field_name']);
     }
     else {
-      drupal_set_message(t('Field replacement removed.'));
+      backdrop_set_message(t('Field replacement removed.'));
     }
   }
   $form_state['redirect'] = _field_ui_bundle_admin_path($form['#entity_type'], $form['#bundle']) . '/fields';
@@ -95,10 +95,11 @@ function title_admin_settings_form() {
 
     $options = array();
     foreach (array_keys($info['field replacement']) as $replacement) {
-      $options[$replacement] = drupal_ucfirst($replacement);
+      $options[$replacement] = backdrop_ucfirst($replacement);
     }
 
-    $default = variable_get('title_' . $entity_type, array());
+    //$default = variable_get('title_' . $entity_type, array());
+    $default = config_get('title.settings', $entity_type);
     $form['settings']['title_' . $entity_type]['auto_attach'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Automatic field replacement'),
@@ -110,5 +111,25 @@ function title_admin_settings_form() {
     $form['settings']['title_' . $entity_type]['hide_label'] = _title_hide_label_widget($default, $info['label']);
   }
 
-  return system_settings_form($form);
+  // Add a submit button
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save configuration'),
+  );
+
+  return $form;
+}
+
+/**
+ * Submit handler for title_admin_settings_form().
+ */
+function title_admin_settings_form_submit($form, &$form_state) {
+  $config = config('title.settings');
+  foreach(entity_get_info() as $entity_type => $info) {
+    $config->set('title_' . $entity_type, $form_state['values']['settings']['title_' . $entity_type]);
+    $config->set('title_' . $entity_type['auto_attach'], $form_state['values']['settings']['title_' . $entity_type]['auto_attach']);
+  }
+  $config->save();
+  backdrop_set_message(t('The configuration options have been saved.'));
 }

@@ -85,10 +85,10 @@ function title_entity_info_alter(&$info) {
 /**
  * Return field replacement specific information.
  *
- * @param $entity_type
+ * @param string $entity_type
  *   The name of the entity type.
- * @param $legacy_field
- *   (Otional) The legacy field name to be replaced.
+ * @param string $legacy_field
+ *   (Optional) The legacy field name to be replaced.
  */
 function title_field_replacement_info($entity_type, $legacy_field = NULL) {
   $info = entity_get_info($entity_type);
@@ -162,7 +162,7 @@ function title_entity_presave($entity, $entity_type) {
   // the entity table.
   if ($entity_langcode != $langcode) {
     list($id, , ) = entity_extract_ids($entity_type, $entity);
-    $sync = &drupal_static('title_entity_sync', array());
+    $sync = &backdrop_static('title_entity_sync', array());
     unset($sync[$entity_type][$id]);
     title_entity_sync($entity_type, $entity, $entity_langcode);
   }
@@ -174,7 +174,7 @@ function title_entity_presave($entity, $entity_type) {
 function title_field_attach_update($entity_type, $entity) {
   // Reset the field_attach_presave static cache so that subsequent saves work
   // correctly.
-  $sync = &drupal_static('title_field_attach_presave', array());
+  $sync = &backdrop_static('title_field_attach_presave', array());
   list($id, , ) = entity_extract_ids($entity_type, $entity);
   unset($sync[$entity_type][$id]);
 
@@ -290,7 +290,8 @@ function title_field_replacement_toggle($entity_type, $bundle, $legacy_field) {
   $instance = field_info_instance($entity_type, $field_name, $bundle);
 
   if (empty($instance)) {
-    $options = variable_get('title_' . $entity_type, array());
+    //$options = variable_get('title_' . $entity_type, array());
+    $options = config_get('title.settings', $entity_type);
     $field = field_info_field($field_name);
     if (empty($field)) {
       field_create_field($info['field']);
@@ -354,7 +355,8 @@ function title_field_replacement_batch($entity_type, $bundle, $legacy_field, &$c
     $context['sandbox']['total'] = $total;
   }
 
-  $step = variable_get('title_field_replacement_batch_size', 5);
+  //$step = variable_get('title_field_replacement_batch_size', 5);
+  $step = config_get('title.settings', 'title_field_replacement_batch_size');
   $start = $step * $context['sandbox']['steps']++;
   $results = $query
     ->entityCondition('entity_type', $entity_type)
@@ -411,7 +413,7 @@ function title_field_replacement_init($entity_type, $bundle, $legacy_field, $ids
  *   Specifies the direction synchronization must be performed.
  */
 function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALSE) {
-  $sync = &drupal_static(__FUNCTION__, array());
+  $sync = &backdrop_static(__FUNCTION__, array());
   list($id, , $bundle) = entity_extract_ids($entity_type, $entity);
 
   if (!isset($langcode)) {
@@ -445,7 +447,7 @@ function title_entity_sync($entity_type, &$entity, $langcode = NULL, $set = FALS
  *   Either an array of entity IDs to reset or NULL to reset all.
  */
 function title_entity_sync_static_reset($entity_type, $entity_ids = NULL) {
-  $sync = &drupal_static('title_entity_sync', array());
+  $sync = &backdrop_static('title_entity_sync', array());
   if (is_array($entity_ids)) {
     foreach ($entity_ids as $id) {
       unset($sync[$entity_type][$id]);
@@ -485,7 +487,7 @@ function title_field_sync_get($entity_type, $entity, $legacy_field, $info, $lang
       }
     }
     // Ensure we do not pollute field language static cache.
-    $cache = &drupal_static('field_language');
+    $cache = &backdrop_static('field_language');
     list($id, ,) = entity_extract_ids($entity_type, $entity);
     unset($cache[$entity_type][$id]);
   }
@@ -527,11 +529,11 @@ function title_field_sync_set($entity_type, $entity, $legacy_field, $info, $lang
  *   The active language code. Defaults to the current content language.
  */
 function title_active_language($langcode = NULL) {
-  static $drupal_static_fast;
-  if (!isset($drupal_static_fast)) {
-    $drupal_static_fast['active_language'] = &drupal_static(__FUNCTION__);
+  static $backdrop_static_fast;
+  if (!isset($backdrop_static_fast)) {
+    $backdrop_static_fast['active_language'] = &backdrop_static(__FUNCTION__);
   }
-  $active_langcode = &$drupal_static_fast['active_language'];
+  $active_langcode = &$backdrop_static_fast['active_language'];
   if (isset($langcode)) {
     $active_langcode = $langcode;
   }
@@ -607,12 +609,12 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
 
   if (!empty($fr_info)) {
     // We copy (rather than reference) the values from $form_state because the
-    // subsequent call to drupal_array_get_nested_value() is destructive and
+    // subsequent call to backdrop_array_get_nested_value() is destructive and
     // will affect other hooks relying on data in $form_state. At the end, we
     // copy any modified value back into the $form_state array using
-    // drupal_array_set_nested_value().
+    // backdrop_array_set_nested_value().
     $values = $form_state['values'];
-    $values = drupal_array_get_nested_value($values, $form['#parents']);
+    $values = backdrop_array_get_nested_value($values, $form['#parents']);
     $langcode = entity_language($entity_type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
@@ -624,12 +626,12 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
           $info['callbacks']['submit']($entity_type, $entity, $legacy_field, $info, $langcode, $values);
         }
 
-        drupal_static_reset('field_language');
+        backdrop_static_reset('field_language');
         title_field_sync_get($entity_type, $entity, $legacy_field, $info, $langcode);
       }
     }
 
-    drupal_array_set_nested_value($form_state['values'], $form['#parents'], $values);
+    backdrop_array_set_nested_value($form_state['values'], $form['#parents'], $values);
   }
 }
 
@@ -653,7 +655,7 @@ function title_menu() {
             $bundle_arg = $bundle_name;
           }
 
-          $access = array_intersect_key($bundle_info['admin'], drupal_map_assoc(array('access callback', 'access arguments')));
+          $access = array_intersect_key($bundle_info['admin'], backdrop_map_assoc(array('access callback', 'access arguments')));
           $access += array(
             'access callback' => 'user_access',
             'access arguments' => array('administer site configuration'),
@@ -664,7 +666,7 @@ function title_menu() {
           $items[$path] = array(
             'load arguments' => array(),
             'title' => 'Replace fields',
-            'page callback' => 'drupal_get_form',
+            'page callback' => 'backdrop_get_form',
             'page arguments' => array('title_field_replacement_form', $entity_type, $bundle_arg, $field_arg),
             'file' => 'title.admin.inc',
           ) + $access;
@@ -676,7 +678,7 @@ function title_menu() {
   $items['admin/config/content/title'] = array(
     'title' => 'Title settings',
     'description' => 'Settings for the Title module.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('title_admin_settings_form'),
     'access arguments' => array('administer site configuration'),
     'file' => 'title.admin.inc',
@@ -728,7 +730,7 @@ function title_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
  * Make sure tokens are properly translated.
  */
 function title_tokens_alter(array &$replacements, array $context) {
-  $mapping = &drupal_static(__FUNCTION__);
+  $mapping = &backdrop_static(__FUNCTION__);
   if (empty($mapping)) {
     foreach (entity_get_info() as $entity_type => $info) {
       if (!empty($info['token type'])) {
@@ -796,7 +798,7 @@ function _title_hide_label_widget($default, $entity_label) {
     '#default_value' => !empty($default['hide_label']) ? $default['hide_label'] : array(),
     '#options' => array(
       'page' => t('Hide page title'),
-      'entity' => t('Hide label in %entity_label listings', array('%entity_label' => drupal_strtolower($entity_label))),
+      'entity' => t('Hide label in %entity_label listings', array('%entity_label' => backdrop_strtolower($entity_label))),
     ),
   );
 }
@@ -916,7 +918,7 @@ function title_field_replacement_hide_label($entity_type, $entity, &$variables, 
 function title_views_api() {
   return array(
     'api' => 3,
-    'path' => drupal_get_path('module', 'title') . '/views',
+    'path' => backdrop_get_path('module', 'title') . '/views',
   );
 }
 
@@ -931,7 +933,8 @@ function title_field_attach_create_bundle($entity_type, $bundle) {
     return;
   }
 
-  $options = variable_get('title_' . $entity_type, array());
+  //$options = variable_get('title_' . $entity_type, array());
+  $options = config_get('title.settings', $entity_type);
 
   foreach (array_keys($entity_info['field replacement']) as $legacy_field) {
     if (empty($options['auto_attach'][$legacy_field])) {
@@ -949,10 +952,10 @@ function title_field_attach_create_bundle($entity_type, $bundle) {
     $instance = field_info_instance($entity_type, $field_name, $bundle);
     if ($instance) {
       $params = array(
-        '@entity_label' => drupal_strtolower($entity_info['label']),
+        '@entity_label' => backdrop_strtolower($entity_info['label']),
         '%field_name' => $instance['label'],
       );
-      drupal_set_message(t('The @entity_label %field_name field was automatically replaced.', $params));
+      backdrop_set_message(t('The @entity_label %field_name field was automatically replaced.', $params));
     }
   }
 }
@@ -990,4 +993,27 @@ function title_taxonomy_allowed_values($field) {
     return $options;
   }
   return taxonomy_allowed_values($field);
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function title_autoload_info() {
+  return array(
+    'views_handler_title_field' => 'views/views_handler_title_field.inc',
+    'title' => 'tests/title.test',
+  );
+}
+
+/**
+ * Implements hook_config_info()
+ */
+function title_config_info() {
+  // If this configuration file points to one particular file, a "name" key
+  // will display that exact string for that file.
+  $prefixes['title.settings'] = array(
+    'label' => t('Title settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }

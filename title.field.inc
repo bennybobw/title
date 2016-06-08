@@ -148,11 +148,11 @@ function title_field_formatter_view($entity_type, $entity, $field, $instance, $l
  * @see title_field_formatter_settings_form()
  */
 function _title_validate_class($element, &$form_state) {
-  $value = drupal_array_get_nested_value($form_state['values'], $element['#parents']);
+  $value = backdrop_array_get_nested_value($form_state['values'], $element['#parents']);
   $classes = explode(' ', $value);
 
   foreach ($classes as $class) {
-    if ($class != drupal_html_class($class)) {
+    if ($class != backdrop_html_class($class)) {
       form_error($element, t('Wrapper classes contain illegal characters; classes should be lowercase and may contain letters, numbers, and dashes.'));
       return;
     }

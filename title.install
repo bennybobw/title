@@ -25,31 +25,17 @@ function title_install() {
 }
 
 /**
- * Implements hook_update_N.
- *
- * Make sure Title has a very high weight to be able to perform reverse
- * synchronization reliably.
+ * Implements hook_update_last_removed().
  */
-function title_update_7001() {
-  _title_install_set_weight(100);
+function title_update_last_removed() {
+  return 7002;
 }
 
 /**
- * Implements hook_update_N.
- *
- * Update title_auto_attach variables to the new format.
+ * Upgrade Title variables to config.
  */
-function title_update_7002() {
-  $variables = array();
-
-  foreach (variable_get('title_auto_attach', array()) as $variable) {
-    $pieces = explode(':', $variable);
-    $variables['title_' . $pieces[0]]['auto_attach'][$pieces[1]] = $pieces[1];
-  }
-
-  foreach ($variables as $name => $value) {
-    variable_set($name, $value);
-  }
-
-  variable_del('title_auto_attach');
+function title_update_1000() {
+  //'title_auto_attach'
+  //'title_field_replacement_batch_size'
+  //'title_$entity_type(s)'
 }
