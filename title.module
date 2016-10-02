@@ -722,6 +722,11 @@ function title_field_extra_fields_alter(&$info) {
 function title_form_field_ui_field_overview_form_alter(&$form, &$form_state) {
   module_load_include('inc', 'title', 'title.admin');
   title_form_field_ui_overview($form, $form_state);
+
+  // Unset the colspan on the FIELD TYPE manage fields column for title module
+  // users since we add an operation to the OPERATIONS column on
+  // the /admin/structure/types/manage/page/fields form.
+  unset($form['fields']['title']['type']['#cell_attributes']['colspan']);
 }
 
 /**
