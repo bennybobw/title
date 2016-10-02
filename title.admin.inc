@@ -18,10 +18,22 @@ function title_form_field_ui_overview(&$form, &$form_state) {
     foreach (element_children($form['fields']) as $field_name) {
       if (isset($field_replacement_info[$field_name])) {
         $form['fields'][$field_name]['delete'] = array(
+          '#prefix' => '
+            <div class="dropbutton-wrapper dropbutton-processed">
+              <div class="dropbutton-widget">
+                <ul class="dropbutton">
+                  <li class="edit odd first dropbutton-action">
+          ',
           '#type' => 'link',
           '#title' => t('replace'),
           '#href' => $admin_path . '/fields/replace/' . $field_name,
           '#options' => array('attributes' => array('title' => t('Replace %field with a customizable field instance that can be translated.', array('%field' => $field_name)))),
+          '#suffix' => '
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ',
         );
       }
     }
