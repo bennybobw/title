@@ -243,7 +243,7 @@ function title_entitycache_reset($ids, $entity_type) {
  * different language might be specified while viewing the entity in which case
  * synchronization must be performed again.
  */
-function title_entity_prepare_view($entities, $type, $langcode) {
+function title_entity_prepare_view($entities, $type, $langcode = NULL) {
   foreach ($entities as &$entity) {
     title_entity_sync($type, $entity, $langcode);
   }
@@ -538,7 +538,7 @@ function title_active_language($langcode = NULL) {
     $active_langcode = $langcode;
   }
   if (empty($active_langcode)) {
-    $active_langcode = $GLOBALS['language_content']->language;
+    $active_langcode = $GLOBALS['language_content']->langcode;
   }
   return $active_langcode;
 }
