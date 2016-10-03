@@ -557,12 +557,12 @@ function title_active_language($langcode = NULL) {
  *   A language code
  */
 function title_entity_language($entity_type, $entity) {
-  if (module_exists('entity_translation') && entity_translation_enabled($entity_type)) {
+  if (module_exists('translation') && entity_translation_enabled($entity_type)) {
     $handler = entity_translation_get_handler($entity_type, $entity, TRUE);
     $langcode = $handler->getLanguage();
   }
   else {
-    $langcode = entity_language($entity_type, $entity);
+    $langcode = $entity->langcode;
   }
   return !empty($langcode) ? $langcode : LANGUAGE_NONE;
 }
