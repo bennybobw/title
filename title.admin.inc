@@ -111,7 +111,7 @@ function title_admin_settings_form() {
     }
 
     //$default = variable_get('title_' . $entity_type, array());
-    $default = config_get('title.settings', $entity_type);
+    $default = config_get('title.settings', 'title_' . $entity_type);
     $form['settings']['title_' . $entity_type]['auto_attach'] = array(
       '#type' => 'checkboxes',
       '#title' => t('Automatic field replacement'),
@@ -139,8 +139,8 @@ function title_admin_settings_form() {
 function title_admin_settings_form_submit($form, &$form_state) {
   $config = config('title.settings');
   foreach(entity_get_info() as $entity_type => $info) {
-    $config->set('title_' . $entity_type, $form_state['values']['settings']['title_' . $entity_type]);
-    $config->set('title_' . $entity_type['auto_attach'], $form_state['values']['settings']['title_' . $entity_type]['auto_attach']);
+    $config->set('title_' . $entity_type, $form_state['values']['title_' . $entity_type]);
+    $config->set('title_' . $entity_type['auto_attach'], $form_state['values']['title_' . $entity_type]['auto_attach']);
   }
   $config->save();
   backdrop_set_message(t('The configuration options have been saved.'));
