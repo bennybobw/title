@@ -615,7 +615,7 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
     // backdrop_array_set_nested_value().
     $values = $form_state['values'];
     $values = backdrop_array_get_nested_value($values, $form['#parents']);
-    $langcode = entity_language($entity_type, $entity);
+    $langcode = title_entity_language($entity_type, $entity);
 
     foreach ($fr_info as $legacy_field => $info) {
       if (!empty($form[$legacy_field]['#field_replacement'])) {
@@ -756,7 +756,7 @@ function title_tokens_alter(array &$replacements, array $context) {
       // the current working language, that is the entity language. Modules
       // using Title tokens in display contexts need to specify the current
       // display language.
-      $langcode = isset($options['language']) ? $options['language']->language : entity_language($entity_type, $entity);
+      $langcode = isset($options['language']) ? $options['language']->language : title_entity_language($entity_type, $entity);
 
       if ($fr_info) {
         foreach ($fr_info as $legacy_field => $info) {
