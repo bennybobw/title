@@ -45,4 +45,5 @@ Ported to Backdrop by serundeputy https://github.com/serundeputy.
 
 Current maintainers:
 * Geoff St. Pierre (serundeputy) - https://github.com/serundeputy
+* Ben Wheeler (bennybobw) - https://github.com/bennybobw
 * Seeking co-maintainers
